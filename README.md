@@ -1,5 +1,5 @@
 # DonationsToVotes
-Repository for TCSS 435 group: donation to votes
+Repository for TCSS 445 group: donation to votes
 Contributors:
 Gaby
 Sally
