@@ -1,0 +1,174 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- Schema donation_votes
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema donation_votes
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `donation_votes` DEFAULT CHARACTER SET utf8 ;
+USE `donation_votes` ;
+
+-- -----------------------------------------------------
+-- Table `donation_votes`.`bills`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `donation_votes`.`bills` (
+  `BILL_ID` VARCHAR(16) NOT NULL,
+  `BILL_NAME` VARCHAR(255) NULL DEFAULT NULL,
+  `summary` TEXT NULL DEFAULT NULL,
+  PRIMARY KEY (`BILL_ID`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `donation_votes`.`elected_officials`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `donation_votes`.`elected_officials` (
+  `OFF_ID` INT(3) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
+  `LastName` CHAR(25) NOT NULL,
+  `FirstName` CHAR(25) NOT NULL,
+  `District` INT(11) NOT NULL,
+  `Office` ENUM('Senate', 'Representative', 'other') NULL DEFAULT NULL,
+  `Position` ENUM('1', '2') NULL DEFAULT NULL,
+  `Party` ENUM('D', 'R', 'I', 'L', 'S', 'T', 'O') NULL DEFAULT NULL,
+  PRIMARY KEY (`OFF_ID`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `donation_votes`.`entity`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `donation_votes`.`entity` (
+  `ENT_ID` INT(3) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
+  `Name` CHAR(255) NOT NULL,
+  `Location` CHAR(255) NULL DEFAULT NULL,
+  `ROLE_ID` ENUM('elected_officials', 'industry', 'private_citizen', 'non_profit', 'interest_group', 'PAC', 'OTHER') NULL DEFAULT NULL,
+  `Party` ENUM('D', 'R', 'I', 'L', 'S', 'T', 'O') NULL DEFAULT NULL,
+  PRIMARY KEY (`ENT_ID`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `donation_votes`.`donations`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `donation_votes`.`donations` (
+  `DON_ID` INT(3) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
+  `ENT_ID` INT(3) NULL DEFAULT NULL,
+  `OFF_ID` INT(3) NULL DEFAULT NULL,
+  `Date` DATE NOT NULL,
+  `Amount` DECIMAL(15,2) NULL DEFAULT NULL,
+  PRIMARY KEY (`DON_ID`),
+  INDEX `ENT_ID` (`ENT_ID` ASC),
+  INDEX `OFF_ID` (`OFF_ID` ASC),
+  CONSTRAINT `fk_donations_elected_officials1`
+    FOREIGN KEY (`OFF_ID`)
+    REFERENCES `donation_votes`.`elected_officials` (`OFF_ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_donations_entity1`
+    FOREIGN KEY (`ENT_ID`)
+    REFERENCES `donation_votes`.`entity` (`ENT_ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `donation_votes`.`keyword`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `donation_votes`.`keyword` (
+  `KW_ID` INT(3) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
+  `BILL_NAME` VARCHAR(255) NOT NULL,
+  `Keyword` LONGTEXT NULL DEFAULT NULL,
+  PRIMARY KEY (`KW_ID`),
+  INDEX `BILL_NAME_idx` (`BILL_NAME` ASC),
+  CONSTRAINT `BILL_NAME`
+    FOREIGN KEY (`BILL_NAME`)
+    REFERENCES `donation_votes`.`bills` (`BILL_ID`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `donation_votes`.`roles`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `donation_votes`.`roles` (
+  `ROLE_ID` ENUM('elected_officials', 'industry', 'private_citizen', 'non_profit', 'interest_group', 'PAC', 'OTHER') NOT NULL,
+  `Chamber` ENUM('H', 'S', 'none') NULL DEFAULT NULL,
+  `Type` ENUM('private', 'public-elected', 'profit', 'non-profit', 'ngo') NULL DEFAULT NULL,
+  PRIMARY KEY (`ROLE_ID`),
+  CONSTRAINT `fk_roles_entity1`
+    FOREIGN KEY (`ROLE_ID`)
+    REFERENCES `donation_votes`.`entity` (`ROLE_ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `donation_votes`.`sponsor`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `donation_votes`.`sponsor` (
+  `SPONSOR_ID` INT(3) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
+  `BILL_ID` VARCHAR(16) NOT NULL,
+  `ENT_ID` INT(3) NOT NULL,
+  PRIMARY KEY (`SPONSOR_ID`),
+  INDEX `BILL_ID` (`BILL_ID` ASC),
+  INDEX `fk_sponsor_entity1_idx` (`ENT_ID` ASC),
+  CONSTRAINT `fk_sponsor_bills1`
+    FOREIGN KEY (`BILL_ID`)
+    REFERENCES `donation_votes`.`bills` (`BILL_NAME`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_sponsor_entity1`
+    FOREIGN KEY (`ENT_ID`)
+    REFERENCES `donation_votes`.`entity` (`ENT_ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `donation_votes`.`votes`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `donation_votes`.`votes` (
+  `VOTE_ID` INT(3) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
+  `BILL_ID` VARCHAR(16) NOT NULL,
+  `OFF_ID` INT(3) UNSIGNED NOT NULL,
+  `Vote` ENUM('yeas', 'nays', 'absent', 'excused') NULL DEFAULT 'excused',
+  PRIMARY KEY (`VOTE_ID`, `BILL_ID`),
+  INDEX `BILL_ID_idx` (`BILL_ID` ASC),
+  INDEX `OFF_ID` (`OFF_ID` ASC),
+  CONSTRAINT `OFF_ID`
+    FOREIGN KEY (`OFF_ID`)
+    REFERENCES `donation_votes`.`elected_officials` (`OFF_ID`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_votes_bills1`
+    FOREIGN KEY (`BILL_ID`)
+    REFERENCES `donation_votes`.`bills` (`BILL_ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
