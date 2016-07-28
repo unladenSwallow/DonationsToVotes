@@ -4,19 +4,22 @@
 package data;
 
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import file.UrlValidator;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
 /**
@@ -29,18 +32,22 @@ public class VoteGetter {
 	
 	/** Schemes for the UrlValidator.*/
 	static String[] schemes = { "http", "https" };
+	
 	/** For validating the URL.*/
 	static UrlValidator urlValidator = new UrlValidator(schemes);
-	/** the URL for the rollcall page -- not usable until bill # is appended.*/
+	
+	/** the URL for the roll-call page (sans bill # <-- must be appended)*/
 	static String page = "http://app.leg.wa.gov/dlr/rollcall/rollcall.aspx?bienid=23&legnum=";
+	
 	/** For holding a list of bills to be checked.*/
 	private static List<String> bills;
+	
 	/** Map of Bills to Votes --- votes are held as an array of Strings w/ indices:
 	 * 		0: yeas
 	 * 		1: nays
 	 * 		2: others.
 	 * */
-	private static Map<String, String[]> votes;
+	private static TreeMap<String, String[]> votes;
 	/** Set of words that are not to be gathered while gathering votes.*/
 	private static Set<String> invalid_words;
 	
@@ -50,7 +57,7 @@ public class VoteGetter {
 	public VoteGetter() {
 		invalid_words = new HashSet<String>();
 		construct_invalid_set();
-		votes = new HashMap<String, String[]>();
+		votes = new TreeMap<String, String[]>();
 	}
 	
 	/**
@@ -95,19 +102,34 @@ public class VoteGetter {
 	 * by commas.
 	 * @return the new string.
 	 */
-	public static String get_votes(String text){
+	public static Set<String> get_votes(String text, String chamber, Set<String> insert_set, Set<String> other1, Set<String> other2){
 		Scanner scan = new Scanner(text);
-		StringBuilder sb = new StringBuilder();
+		String old_str = "";
 		while(scan.hasNext()){
 			String str = scan.next();
-			if(scan.hasNext() && !str.endsWith(",") && !invalid_words.contains(str)){
-				str += ",";
+			if(!invalid_words.contains(str)) {
+				if(str.endsWith(",")) {
+					str = str.substring(0, str.indexOf(","));
+					if(str.endsWith(".")) {
+						insert_set.remove(old_str);
+						str = old_str.substring(0, old_str.indexOf("_")) + " " + str;
+					}
+				}
+				str += ("_" + chamber);
+				if(!insert_set.contains(str)){
+					if(other1.contains(str)) {
+						other1.remove(str);
+					}
+					if(other2.contains(str)) {
+						other2.remove(str);
+					}
+					insert_set.add(str);
+				}
 			}
-			if(!invalid_words.contains(str)){
-				sb.append(str);
-			}
+			old_str = str;
 		}
-		return sb.toString();
+		scan.close();
+		return insert_set;
 	}
 	
 	/**
@@ -118,7 +140,7 @@ public class VoteGetter {
 	private static void get_votes_on_bill(Document doc, String bill_num) {
 		String search_page = page + bill_num; //append the bill number to the page
 		try {
-			doc = Jsoup.connect(search_page).get(); // connect to the website
+			doc = Jsoup.connect(search_page).userAgent("Mozilla").get(); // connect to the website
 		} catch (IOException e1) {
 			System.err.println(search_page + "\nError: Page Could Not Be Loaded");
 			e1.printStackTrace();
@@ -126,80 +148,115 @@ public class VoteGetter {
 		}
 		String body = doc.html(); // the body of the website
 		Elements elems = doc.getElementsByClass("reportTd"); // get all elements of the noted class for parsing
-		String yeas = ""; // initially empty strings for holding votes
-		String nays = "";
-		String others = "";
+		Set<String> yeas = new TreeSet<String>(); // initially empty strings for holding votes
+		Set<String> nays = new TreeSet<String>(); 
+		Set<String> others = new TreeSet<String>(); 
 		int batch_end = 0; //used in determining where to end parsing for a batch of votes
 		String chamber = ""; // holds the chamber currently being checked
 		int date[] = new int[3]; // holds the date of the votes
 		// for each element:
+		int num = 0;
 		for(Element e : elems) {
 			String text = e.text(); // get the text for that element
 			if(text.startsWith("Chamber:")) { // if it indicates the chamber, grab that information (not done)
 				int i = text.indexOf(" "); 
 				chamber = text.substring(i + 1, text.lastIndexOf("E") + 1);
-			} else if(text.startsWith("Date:")) { // if it indicates the date, grab that info (not done)
-				String temp = text.substring(text.indexOf(" "));
-				int start = 1;
-				int stop = temp.indexOf("-");
-				int month = Integer.valueOf(temp.substring(start, stop));
-				start = stop + 1;
-				stop = temp.indexOf("-", start);
-				int day = Integer.valueOf(temp.substring(start, stop));
-				start = stop + 1;
-				int year = Integer.valueOf(temp.substring(start));
-				if(date.length == 0) {
-					date[0] = month;
-					date[1] = day;
-					date[2] = year;
-				} else if(year >= date[2]) {
-					if(month >= date[1]) {
-						if(year == date[2] && month == date[1] && day >= date[0]) {
-							// do something here to ensure only the most recent date's
-							// data is used.
-						}
-					}
-				}
 			}
 			// If the text starts with "Voting yea" grab the yea votes
 			if(text.startsWith("Voting yea:")) {
 				batch_end = get_stop_point(text);
 				String str = text.substring(0, batch_end);
 				text = text.substring(batch_end);
-				str = get_votes(str);
-				if(!yeas.isEmpty() && !yeas.endsWith(",")) {
-					yeas += ",";
-				}
-				yeas += str;
-//				System.out.println("Yeas: " + yeas);
+				yeas = get_votes(str, chamber, yeas, nays, others);
 			}if(text.startsWith("Voting nay:")) { // else if it starts with "Voting nay" grab nay votes
 				batch_end = get_stop_point(text);
 				String str = text.substring(0, batch_end);
 				text = text.substring(batch_end);
-				str = get_votes(str);
-				if(!nays.isEmpty() && !nays.endsWith(",")) {
-					nays += ",";
-				}
-				nays += str;
-//				System.out.println("Nays: " + nays);
+				nays = get_votes(str, chamber, nays, yeas, others);
 			}if(text.startsWith("Excused:") || text.startsWith("Absent:")) { // else if they are excused or absent, grab those (non)votes
 				batch_end = get_stop_point(text);
-				String str = get_votes(text);
-				if(!others.isEmpty() && !others.endsWith(",")) {
-					others += ",";
+				others = get_votes(text, chamber, others, yeas, nays);
+			}
+		}
+		String[] all_votes = new String[3];
+		all_votes[0] = vote_set_to_string(yeas);
+		all_votes[1] = vote_set_to_string(nays);
+		all_votes[2] = vote_set_to_string(others);
+		votes.put(bill_num, all_votes);
+	}
+	
+	/**
+	 * converts the set of votes to a string.
+	 * @param votes - a set containing the votes.
+	 * @return the completed string.
+	 */
+	private static String vote_set_to_string(Set votes) {
+		StringBuilder sb = new StringBuilder();
+		Iterator itr = votes.iterator();
+		if(itr.hasNext()) {
+			String name = (String) itr.next();
+			sb.append(name.substring(0, name.indexOf("_")));
+		}
+		while(itr.hasNext()) {
+			String name = (String) itr.next();
+			name = name.substring(0, name.indexOf("_"));
+			sb.append(",");
+			sb.append(name);
+		}
+		return sb.toString();
+	}
+	
+	/**
+	 * writes the csv file with votes.
+	 * @param f_out the csv file to write to.
+	 */
+	private static void write_csv(File f_out) {
+		try {
+			FileWriter fout = new FileWriter(f_out);
+			fout.write("bill_num, name, vote\n");
+			for(String bill: votes.keySet()){
+				String[] all_votes = votes.get(bill);
+//				System.err.println(bill + ":");
+				write_votes(fout, all_votes[0], bill, "y");
+//				System.err.println("y:" + all_votes[0]);
+				write_votes(fout, all_votes[1], bill, "n");
+				write_votes(fout, all_votes[2], bill, "o");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Writes the votes to the csv file.
+	 * @param fout the file writer for writing to the csv file.
+	 * @param output the string of votes.
+	 * @param bill the bill number.
+	 * @param vote the vote value (y = yea, n = nay, o = excused or absent)
+	 */
+	private static void write_votes(FileWriter fout, String output, String bill, String vote){
+		int index = 0;
+		int stop = -1;
+		try {
+			if(!output.isEmpty()){
+				while((stop = output.indexOf(",", index)) != -1 && index != stop){
+//					System.err.println("Index = " + index + "Stop = " + stop);
+					fout.write(bill + ",");
+//					System.err.println("Bill = " + bill);
+					fout.write(output.substring(index, stop) + ",");
+//					System.err.println("Output = " + output.substring(index, stop) + ",");
+					fout.write(vote + "\n");
+					index = stop + 1;
+				} 
+				if(index != output.length() - 1){
+					fout.write(bill + ",");
+					fout.write(output.substring(index) + ",");
+					fout.write(vote + "\n");
 				}
-				others += str;
-//				System.out.println("Others: " + others);
 			}
+		}catch (IOException e) {
+			e.printStackTrace();
 		}
-		String[] all_votes = {yeas, nays, others}; // create array of votes for the vote map
-		for(int i = 0; i < all_votes.length; i++){
-			if(all_votes[i].endsWith(",")){ // if there is a comma at the end, get rid of it
-				all_votes[i] = all_votes[i].substring(0, all_votes[i].length() - 1);
-			}
-			System.out.println(i + ". " + all_votes[i]);
-		}
-		votes.put(bill_num, all_votes); // place the votes in the vote map
 	}
 	
 	/**
@@ -208,7 +265,30 @@ public class VoteGetter {
 	 */
 	public static void main(String[] args) {
 		VoteGetter v_get= new VoteGetter();
-		Document doc = null;
-		get_votes_on_bill(doc, "1166");
+		File f_in = new File("billsbysponsorandstatus.csv");
+		File f_out = new File("votes.csv");
+		try {
+			Scanner fscan = new Scanner(f_in);
+			Document doc = null;
+			int count = 0;
+			while(fscan.hasNextLine()){
+				fscan.nextLine();
+				if(fscan.hasNext()) {
+					fscan.next();
+					String temp = fscan.next();
+					int index = temp.indexOf(",");
+					temp = temp.substring(0, index - 1);
+					//System.out.println(temp);
+					get_votes_on_bill(doc, temp);
+//					count++;
+				}
+			}
+			write_csv(f_out);
+			fscan.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 }
+
+
