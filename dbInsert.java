@@ -1,4 +1,7 @@
+package Robert;
+
 import java.sql.*;
+import java.util.List;
 /*
  * Patrick Sanchez
  * TCSS 445A
@@ -6,26 +9,19 @@ import java.sql.*;
  * the Donations2Votes project
  */
 public class dbInsert {
-    public static void main(String[] args) throws SQLException {
-        //connect to my local database
-        connectData("root", "IdaPo7A70");
-    }
 
     /*
      * Connects to the local database and surrounds actions in a try
      * catch block
      * --------------------------------------------------------------
      */
-    public static void connectData(String username, String password)
+    public static void insertData(String username, String password, List<List<String>> data)
             throws SQLException {
         // create this outside of our individual batches
         Connection con = null;
         try {
-            con = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/dotes2votes", username,
-                    password);
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/dotes2votes", username, password);
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -33,18 +29,35 @@ public class dbInsert {
         Statement toggle = con.createStatement();
         toggle.execute("SET FOREIGN_KEY_CHECKS = 0;");
 
-        Statement stmt = con.createStatement();
-      
+        Statement stmt = con.createStatement();     
+        
+        //delete database before inserting
+        stmt.addBatch("delete from roles");
+        stmt.addBatch("delete from entities");
+        stmt.addBatch("delete from bills");
+        stmt.addBatch("delete from keywords");
+        stmt.addBatch("delete from votes");
+        stmt.addBatch("delete from donations");
         
         //Example function calls, each one makes a single insert into the table
         //--------------------------------------------------------------
 
-//        updateBills(stmt,"HB456","TESTBILL456","Another test of the data entry method");
-//        updateDonations(stmt,"2","2","19771008","10");
-//        updateEntities(stmt,"3","1","SimpleNPO","Independent");
-//        updateKeywords(stmt,"SB4321","testkey","redirect");
-//        updateRoles(stmt,"1","elected official","Senator","Senate","1","THISGUY");
-//        updateVotes(stmt,"1","TESTBILL","yea","1");
+//          updateBills(stmt,"HB456","TESTBILL456","Another test of the data entry method");
+//          updateDonations(stmt,"2","2","19771008","10");
+//          updateEntities(stmt,"3","1","SimpleNPO","Independent");
+//          updateKeywords(stmt,"SB4321","testkey");
+//          updateRoles(stmt,"1","elected official","Senator","Senate","1","THISGUY");
+//          updateVotes(stmt,"1","TESTBILL","yea","1");
+        
+        for (List<String> line: data){
+        	
+          updateBills(stmt,line.get(0),"-",line.get(2));
+          //updateDonations(stmt,"2","2","19771008","10");
+          //updateEntities(stmt,"3","1","SimpleNPO","Independent");
+          //updateKeywords(stmt,"SB4321","testkey");
+          //updateRoles(stmt,"1","elected official","Senator","Senate","1","THISGUY");
+          //updateVotes(stmt,"1","TESTBILL","yea","1");
+        }
         
         //run our batch of collected inserts
         stmt.executeBatch();
@@ -59,8 +72,7 @@ public class dbInsert {
     }
 
     //--------------------------------------------------------------
-    //FUNCTIONS
-    
+    //FUNCTIONS    
     
     /* 
      * A Function which populates one entry of the keywords Table
@@ -86,7 +98,7 @@ public class dbInsert {
         // set size equal to number of expected characters to minimize
         // reallocation
         StringBuilder sb = new StringBuilder(200);
-        sb.append("insert into bills (BILL_NAME,FullName,Summary) values(");
+        sb.append("insert into bills (BILL_NAME,FullName,Topic) values(");
         sb.append("'");
         sb.append(bill);
         sb.append("','");
@@ -101,9 +113,7 @@ public class dbInsert {
 
         st.addBatch(sb.toString());
 
-    }
-    
-    
+    }    
     
     /* 
      * A Function which populates one entry of the donations Table
@@ -132,8 +142,7 @@ public class dbInsert {
         // set size equal to number of expected characters to minimize
         // reallocation
         StringBuilder sb = new StringBuilder(100);
-        sb.append(
-                "insert into donations (FROM_ID,TO_ID,DonationDate,Amount) values(");
+        sb.append("insert into donations (FROM_ID,TO_ID,DonationDate,Amount) values(");
         sb.append(from);
         sb.append(",");
         sb.append(to);
@@ -195,11 +204,7 @@ public class dbInsert {
 
         st.addBatch(sb.toString());
 
-    }
-    
-    
-    
-    
+    }    
     
     /* 
      * A Function which populates one entry of the keywords Table
@@ -220,18 +225,16 @@ public class dbInsert {
      * 
      */
     private static void updateKeywords(Statement st, String bill,
-            String key, String redir)
+            String key)
                     throws SQLException {
         // set size equal to number of expected characters to minimize
         // reallocation
         StringBuilder sb = new StringBuilder(200);
-        sb.append("insert into keywords (BILL_NAME,Keyword,Redirect) values(");
+        sb.append("insert into keywords (BILL_NAME,Keyword) values(");
         sb.append("'");
         sb.append(bill);
         sb.append("','");
         sb.append(key);
-        sb.append("','");
-        sb.append(redir);
         sb.append("')");
         //included for test confirmation
 
@@ -287,8 +290,7 @@ public class dbInsert {
 
         st.addBatch(sb.toString());
 
-    }
-    
+    }    
     
     
     /* 
@@ -335,9 +337,5 @@ public class dbInsert {
         st.addBatch(sb.toString());
 
     }
-    
-
-
-
 
 }
