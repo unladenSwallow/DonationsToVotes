@@ -1,64 +1,96 @@
-package Robert;
-
 import java.sql.*;
-import java.util.List;
 /*
  * Patrick Sanchez
  * TCSS 445A
- * A collection of functions and sample commands ot be included in 
- * the Donations2Votes project
+ * A simple tool to insert values into a remote SQL server 
+ * connection.  This is for use in the Donations to Votes Project
+ * Summer Quarter 2016
+ * 
+ * Prepared Statements and small private batch sizes are used to 
+ * combat SQL injection attacks
+ * --------------------------------------------------------------
+ * 
  */
 public class dbInsert {
+    
+    
+    public static void main(String[] args) throws SQLException {
 
+        dbInsert db = new dbInsert("root", "IdaPo7A70","jdbc:mysql://localhost:3306/dotes2votes", 7);
+        
+        
+        db.updateBills("HB456","TESTBILL456","Another test of the data entry method");
+        db.updateDonations("2","2","19771008","10");
+        db.updateDonations("2","3","19771008","12");
+        db.updateEntities("3","1","SimpleNPO","Independent");
+        db.updateKeywords("SB4321","testkey","redirect");
+        db.updateRoles("1","elected official","Senator","Senate","1","THISGUY");
+        db.updateVotes("1","TESTBILL","yea","1");
+    }
+    
+    
+
+    //size of entries to be entered in our statement before a batch is 
+    //executed
+    private int batch = 0;
+    
+    //internal count for our batch, if count ever >= batch, then execute
+    private int count = 0;
+    
+    //prepared statement to hold our batches for execution
+    private PreparedStatement stmt;
+    
+    private Statement toggle;
+    
+    private Connection con = null;
+    
     /*
-     * Connects to the local database and surrounds actions in a try
-     * catch block
+     * Constructor for the class
+     * @pre A remote database exits for our connection
+     * @param username String representing the database username
+     * @param password String representing the database password
+     * @param addr A String representing the server address
+     * @param batchsize An int representing the number of entries
+     * example address: jdbc:mysql://localhost:3306/dotes2votes
+     * @post - a dbInsert object is created, with a connection 
+     * established, or an error is created if no connection
      * --------------------------------------------------------------
      */
-    public static void insertData(String username, String password, List<List<String>> data)
-            throws SQLException {
-        // create this outside of our individual batches
-        Connection con = null;
+    dbInsert(String username, String password, String addr, int batchsize) throws SQLException {
+
+        this.batch = batchsize;
+        
+        //Connection con = null;
         try {
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/dotes2votes", username, password);
+            //establish connection without using SSL
+            con = DriverManager.getConnection(
+                    addr + "?autoReconnect=true&useSSL=false", username,
+                    password);
         } catch (SQLException e) {
+            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
         // temporarily disables foreign key checks when building the database
-        Statement toggle = con.createStatement();
+        toggle = con.createStatement();
         toggle.execute("SET FOREIGN_KEY_CHECKS = 0;");
-
-        Statement stmt = con.createStatement();     
         
-        //delete database before inserting
-        stmt.addBatch("delete from roles");
-        stmt.addBatch("delete from entities");
-        stmt.addBatch("delete from bills");
-        stmt.addBatch("delete from keywords");
-        stmt.addBatch("delete from votes");
-        stmt.addBatch("delete from donations");
+        //set our prepared statement 
+        stmt = con.prepareStatement("");
         
-        //Example function calls, each one makes a single insert into the table
-        //--------------------------------------------------------------
-
-//          updateBills(stmt,"HB456","TESTBILL456","Another test of the data entry method");
-//          updateDonations(stmt,"2","2","19771008","10");
-//          updateEntities(stmt,"3","1","SimpleNPO","Independent");
-//          updateKeywords(stmt,"SB4321","testkey");
-//          updateRoles(stmt,"1","elected official","Senator","Senate","1","THISGUY");
-//          updateVotes(stmt,"1","TESTBILL","yea","1");
-        
-        for (List<String> line: data){
-        	
-          updateBills(stmt,line.get(0),"-",line.get(2));
-          //updateDonations(stmt,"2","2","19771008","10");
-          //updateEntities(stmt,"3","1","SimpleNPO","Independent");
-          //updateKeywords(stmt,"SB4321","testkey");
-          //updateRoles(stmt,"1","elected official","Senator","Senate","1","THISGUY");
-          //updateVotes(stmt,"1","TESTBILL","yea","1");
-        }
-        
+    }
+   
+    /*
+     * A small fucntion which closes out internal connections 
+     * and finishes any remaining small batches
+     * 
+     * @pre A dbInsert objetc has been created
+     * @return No return
+     * @post Database connections are severed, foreign key checks are
+     * restored, and the remaining batch is executed
+     * --------------------------------------------------------------
+     */
+    public void dbClose() throws SQLException {
         //run our batch of collected inserts
         stmt.executeBatch();
         
@@ -68,11 +100,30 @@ public class dbInsert {
         
         stmt.close();
         con.close();
-
+        
     }
-
+    
+    
+    /*
+     * A small helper function which increments our count, checks it 
+     * against batchsize, and commits the batch if it meets the 
+     * threshold.
+     * 
+     * 
+     * 
+     * --------------------------------------------------------------
+     */
+    private void counter() throws SQLException {
+        count++;
+        if(count >= batch) {
+            count = 0;
+            stmt.executeBatch();
+        }
+    }
+    
     //--------------------------------------------------------------
-    //FUNCTIONS    
+    //FUNCTIONS
+    
     
     /* 
      * A Function which populates one entry of the keywords Table
@@ -92,13 +143,13 @@ public class dbInsert {
      * --------------------------------------------------------------
      * 
      */
-    private static void updateBills(Statement st, String bill,
+    private void updateBills(String bill,
             String name, String summary)
                     throws SQLException {
         // set size equal to number of expected characters to minimize
         // reallocation
         StringBuilder sb = new StringBuilder(200);
-        sb.append("insert into bills (BILL_NAME,FullName,Topic) values(");
+        sb.append("insert into bills (BILL_NAME,FullName,Summary) values(");
         sb.append("'");
         sb.append(bill);
         sb.append("','");
@@ -111,9 +162,12 @@ public class dbInsert {
         String result = sb.toString();
         System.out.println(result);
 
-        st.addBatch(sb.toString());
+        this.stmt.addBatch(sb.toString());
+        counter();
 
-    }    
+    }
+    
+    
     
     /* 
      * A Function which populates one entry of the donations Table
@@ -136,13 +190,14 @@ public class dbInsert {
      * --------------------------------------------------------------
      * 
      */
-    private static void updateDonations(Statement st, String from,
+    private void updateDonations(String from,
             String to, String date, String decimal)
                     throws SQLException {
         // set size equal to number of expected characters to minimize
         // reallocation
         StringBuilder sb = new StringBuilder(100);
-        sb.append("insert into donations (FROM_ID,TO_ID,DonationDate,Amount) values(");
+        sb.append(
+                "insert into donations (FROM_ID,TO_ID,DonationDate,Amount) values(");
         sb.append(from);
         sb.append(",");
         sb.append(to);
@@ -156,7 +211,9 @@ public class dbInsert {
 
         System.out.println(result);
 
-        st.addBatch(sb.toString());
+        stmt.addBatch(sb.toString());
+        counter();
+
 
     }
     
@@ -182,7 +239,7 @@ public class dbInsert {
      * --------------------------------------------------------------
      * 
      */
-    private static void updateEntities(Statement st, String entid,
+    private void updateEntities(String entid,
             String rolid, String name,String party)
                     throws SQLException {
         // set size equal to number of expected characters to minimize
@@ -202,9 +259,14 @@ public class dbInsert {
         String result = sb.toString();
         System.out.println(result);
 
-        st.addBatch(sb.toString());
+        stmt.addBatch(sb.toString());
+        counter();
 
-    }    
+    }
+    
+    
+    
+    
     
     /* 
      * A Function which populates one entry of the keywords Table
@@ -224,24 +286,27 @@ public class dbInsert {
      * --------------------------------------------------------------
      * 
      */
-    private static void updateKeywords(Statement st, String bill,
-            String key)
+    private void updateKeywords(String bill,
+            String key, String redir)
                     throws SQLException {
         // set size equal to number of expected characters to minimize
         // reallocation
         StringBuilder sb = new StringBuilder(200);
-        sb.append("insert into keywords (BILL_NAME,Keyword) values(");
+        sb.append("insert into keywords (BILL_NAME,Keyword,Redirect) values(");
         sb.append("'");
         sb.append(bill);
         sb.append("','");
         sb.append(key);
+        sb.append("','");
+        sb.append(redir);
         sb.append("')");
         //included for test confirmation
 
         String result = sb.toString();
         System.out.println(result);
 
-        st.addBatch(sb.toString());
+        stmt.addBatch(sb.toString());
+        counter();
 
     }
     
@@ -263,7 +328,7 @@ public class dbInsert {
      * --------------------------------------------------------------
      * 
      */
-    private static void updateRoles(Statement st, String rolid,
+    private void updateRoles(String rolid,
             String type, String title, String chmbr,String dist,String descr)
                     throws SQLException {
         // set size equal to number of expected characters to minimize
@@ -288,9 +353,12 @@ public class dbInsert {
         String result = sb.toString();
         System.out.println(result);
 
-        st.addBatch(sb.toString());
+        stmt.addBatch(sb.toString());
+        counter();
 
-    }    
+
+    }
+    
     
     
     /* 
@@ -312,7 +380,7 @@ public class dbInsert {
      * --------------------------------------------------------------
      * 
      */
-    private static void updateVotes(Statement st, String polid,
+    private void updateVotes(String polid,
             String billname, String vote, String sponsor)
                     throws SQLException {
         // set size equal to number of expected characters to minimize
@@ -334,8 +402,14 @@ public class dbInsert {
         //included for test confirmation
         System.out.println(result);
 
-        st.addBatch(sb.toString());
+        stmt.addBatch(sb.toString());
+        counter();
+
 
     }
+    
+
+
+
 
 }
