@@ -14,20 +14,20 @@ import java.sql.*;
 public class dbInsert {
     
     
-    public static void main(String[] args) throws SQLException {
-
-        dbInsert db = new dbInsert("root", "IdaPo7A70","jdbc:mysql://localhost:3306/dotes2votes", 7);
-        
-        
-        db.updateBills("HB456","TESTBILL456","Another test of the data entry method");
-        db.updateDonations("2","2","19771008","10");
-        db.updateDonations("2","3","19771008","12");
-        db.updateEntities("3","1","SimpleNPO","Independent");
-        db.updateKeywords("SB4321","testkey","redirect");
-        db.updateRoles("1","elected official","Senator","Senate","1","THISGUY");
-        db.updateVotes("1","TESTBILL","yea","1");
-        db.dbClose();
-    }
+//    public static void main(String[] args) throws SQLException {
+//
+//        dbInsert db = new dbInsert("root", "IdaPo7A70","jdbc:mysql://localhost:3306/dotes2votes", 7);
+//        
+//        
+//        db.updateBills("HB456","TESTBILL456","Another test of the data entry method");
+//        db.updateDonations("2","2","19771008","10");
+//        db.updateDonations("2","3","19771008","12");
+//        db.updateEntities("3","1","SimpleNPO","Independent");
+//        db.updateKeywords("SB4321","testkey","redirect");
+//        db.updateRoles("1","elected official","Senator","Senate","1","THISGUY");
+//        db.updateVotes("1","TESTBILL","yea","1");
+//        db.dbClose();
+//    }
     
     
 
@@ -144,7 +144,7 @@ public class dbInsert {
      * --------------------------------------------------------------
      * 
      */
-    private void updateBills(String bill,
+    public void updateBills(String bill,
             String name, String summary)
                     throws SQLException {
         // set size equal to number of expected characters to minimize
@@ -191,7 +191,7 @@ public class dbInsert {
      * --------------------------------------------------------------
      * 
      */
-    private void updateDonations(String from,
+    public void updateDonations(String from,
             String to, String date, String decimal)
                     throws SQLException {
         // set size equal to number of expected characters to minimize
@@ -240,7 +240,7 @@ public class dbInsert {
      * --------------------------------------------------------------
      * 
      */
-    private void updateEntities(String entid,
+    public void updateEntities(String entid,
             String rolid, String name,String party)
                     throws SQLException {
         // set size equal to number of expected characters to minimize
@@ -287,7 +287,7 @@ public class dbInsert {
      * --------------------------------------------------------------
      * 
      */
-    private void updateKeywords(String bill,
+    public void updateKeywords(String bill,
             String key, String redir)
                     throws SQLException {
         // set size equal to number of expected characters to minimize
@@ -329,7 +329,7 @@ public class dbInsert {
      * --------------------------------------------------------------
      * 
      */
-    private void updateRoles(String rolid,
+    public void updateRoles(String rolid,
             String type, String title, String chmbr,String dist,String descr)
                     throws SQLException {
         // set size equal to number of expected characters to minimize
@@ -381,7 +381,7 @@ public class dbInsert {
      * --------------------------------------------------------------
      * 
      */
-    private void updateVotes(String polid,
+    public void updateVotes(String polid,
             String billname, String vote, String sponsor)
                     throws SQLException {
         // set size equal to number of expected characters to minimize
