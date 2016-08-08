@@ -199,10 +199,11 @@ public class dbInsert {
         StringBuilder sb = new StringBuilder(100);
         sb.append(
                 "insert into donations (FROM_ID,TO_ID,DonationDate,Amount) values(");
+        sb.append("'");
         sb.append(from);
-        sb.append(",");
+        sb.append("','");
         sb.append(to);
-        sb.append(",");
+        sb.append("',");
         sb.append(date);
         sb.append(",");
         sb.append(decimal);
@@ -210,10 +211,10 @@ public class dbInsert {
         String result = sb.toString();
         //included for test confirmation
 
-        System.out.println(result);
+        //System.out.println(result.substring(58, result.length()));
 
         stmt.addBatch(sb.toString());
-        counter();
+        //counter();
 
 
     }
@@ -305,7 +306,30 @@ public class dbInsert {
 
         String result = sb.toString();
         System.out.println(result);
-
+        //////////Duplicate Code
+        
+        //check duplicate
+//        boolean dup = false;
+//        for (int j = i + 1; j < bills.size(); j++){
+//            List<String> otherLine = bills.get(j);
+//            String from2 = otherLine.get(0);
+//            if (from2.length() > 32){
+//                from2 = from2.substring(0, 32);
+//            }
+//            
+//            if (from.equals(from2) && otherLine.get(2).equals(otherLine.get(2))){
+//                dup = true;
+//                break;
+//            }
+//        }
+//        if (!dup){
+//            updateEntities(stmt, ID, null, from, null);
+//            
+//            ID++; //next insert
+//            
+//            updateDonations(stmt, from, to, line.get(1), line.get(2));
+//        }
+        
         stmt.addBatch(sb.toString());
         counter();
 
@@ -407,7 +431,9 @@ public class dbInsert {
 
     }
     
-
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    
 
 
 
