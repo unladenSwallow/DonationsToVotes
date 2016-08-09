@@ -21,7 +21,8 @@ CREATE TABLE DONORS (
                               'Person',
                               'Politician',
 							  'Unknown'
-                              ) DEFAULT 'Unknown' NULL,
+                              ) DEFAULT 'Unknown'
+											NOT NULL,
     
     #CONSTRAINTS
     CONSTRAINT			DONORS_PK			PRIMARY KEY (DONOR_ID)
@@ -38,7 +39,7 @@ CREATE TABLE POLITICIANS (
 	POL_ID				integer				NOT NULL,
 
 	#Their name in the format "Firstname M Lastname" with M being the middle initial
-    PoliticianName		char (255)			NULL,
+    PoliticianName		char (255)			NOT NULL,
     
     #House, Senate, or null
     Chamber				enum('House',
@@ -74,8 +75,8 @@ CREATE TABLE LOCATIONS (
     Map					text				NULL,
     
     #CONSTRAINTS
-    CONSTRAINT			LOCATIONS_PK	PRIMARY KEY (DISTRICT),
-    CONSTRAINT			DISTRICT_LIMIT	CHECK (District > 0 AND District < 50)
+    CONSTRAINT			LOCATIONS_PK		PRIMARY KEY (DISTRICT),
+    CONSTRAINT			DISTRICT_LIMIT		CHECK (District > 0 AND District < 50)
 
 );
 
