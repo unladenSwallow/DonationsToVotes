@@ -24,7 +24,10 @@ import org.jsoup.select.Elements;
 
 /**
  * VoteGetter gets the votes from the WALeg website 
- * for each bill in the database. (Currently for one bill)
+ * for each bill in the database. Can be rerun upon system restart 
+ * or to update at pre-determined intervals, but WA State Legislature
+ * html code should be verified periodically for changes to ensure
+ * compatibility.
  * @author Leslie Pedro
  *
  */
@@ -48,6 +51,7 @@ public class VoteGetter {
 	 * 		2: others.
 	 * */
 	private static TreeMap<String, String[]> votes;
+
 	/** Set of words that are not to be gathered while gathering votes.*/
 	private static Set<String> invalid_words;
 	
@@ -61,7 +65,8 @@ public class VoteGetter {
 	}
 	
 	/**
-	 * Constructs the set of invalid words.
+	 * Constructs the set of invalid words. Invalid words are words
+	 * that the crawler should avoid adding to any lists.
 	 */
 	private void construct_invalid_set() {
 		invalid_words.add("Absent:");
@@ -79,7 +84,7 @@ public class VoteGetter {
 	/**
 	 * Checks ahead in the string to see when to stop reading the current votes.
 	 * @param text - the string to examine.
-	 * @return the position in the string at which the votes (elected official names)
+	 * @return the position in the string at which the votes (elected official names).
 	 */
 	public static int get_stop_point(String text) {
 		int stop = text.indexOf("Voting", 6);
@@ -96,21 +101,27 @@ public class VoteGetter {
 	}
 
 	/**
-	 * Cuts invalid string from the list of voting officials.
+	 * Cuts invalid strings from the list of voting officials and reformats names with first
+	 * initials.
 	 * String is returned containing only officials voting separated by commas.
 	 * @param text the parsed and cleaned string - as a string of names separated
 	 * by commas.
-	 * @return the new string.
+	 * @param chamber the chamber of the elected official-- used to prevent legislators with the same names in different.
+	 * chambers from mistakenly being marked as duplicates.
+	 * @param insert_set the set (Y/N/O) to insert the data into.
+	 * @param other1 one of the other sets (Y/N/O) to check for duplicate/changed votes.
+	 * @param other2 the second of the remaining sets to check for dupelicate/changed votes.
+	 * @return the new string of votes
 	 */
 	public static Set<String> get_votes(String text, String chamber, Set<String> insert_set, Set<String> other1, Set<String> other2){
 		Scanner scan = new Scanner(text);
-		String old_str = "";
+		String old_str = ""; // for appending first initial, when needed
 		while(scan.hasNext()){
 			String str = scan.next();
 			if(!invalid_words.contains(str)) {
 				if(str.endsWith(",")) {
 					str = str.substring(0, str.indexOf(","));
-					if(str.endsWith(".")) {
+					if(str.endsWith(".")) { // if ends with "." it is an intial, append it to the previous name
 						insert_set.remove(old_str);
 						str = old_str.substring(0, old_str.indexOf("_")) + " " + str;
 					}
@@ -187,7 +198,7 @@ public class VoteGetter {
 	
 	/**
 	 * converts the set of votes to a string.
-	 * @param votes - a set containing the votes.
+	 * @param votes a set containing the votes.
 	 * @return the completed string.
 	 */
 	private static String vote_set_to_string(Set votes) {
@@ -216,9 +227,7 @@ public class VoteGetter {
 			fout.write("bill_num, name, vote\n");
 			for(String bill: votes.keySet()){
 				String[] all_votes = votes.get(bill);
-//				System.err.println(bill + ":");
 				write_votes(fout, all_votes[0], bill, "y");
-//				System.err.println("y:" + all_votes[0]);
 				write_votes(fout, all_votes[1], bill, "n");
 				write_votes(fout, all_votes[2], bill, "o");
 			}
@@ -232,7 +241,7 @@ public class VoteGetter {
 	 * @param fout the file writer for writing to the csv file.
 	 * @param output the string of votes.
 	 * @param bill the bill number.
-	 * @param vote the vote value (y = yea, n = nay, o = excused or absent)
+	 * @param vote the vote value (y = yea, n = nay, o = excused or absent).
 	 */
 	private static void write_votes(FileWriter fout, String output, String bill, String vote){
 		int index = 0;
@@ -240,11 +249,8 @@ public class VoteGetter {
 		try {
 			if(!output.isEmpty()){
 				while((stop = output.indexOf(",", index)) != -1 && index != stop){
-//					System.err.println("Index = " + index + "Stop = " + stop);
 					fout.write(bill + ",");
-//					System.err.println("Bill = " + bill);
 					fout.write(output.substring(index, stop) + ",");
-//					System.err.println("Output = " + output.substring(index, stop) + ",");
 					fout.write(vote + "\n");
 					index = stop + 1;
 				} 
@@ -268,9 +274,8 @@ public class VoteGetter {
 		File f_in = new File("billsbysponsorandstatus.csv");
 		File f_out = new File("votes.csv");
 		try {
-			Scanner fscan = new Scanner(f_in);
-			Document doc = null;
-			int count = 0;
+			Scanner fscan = new Scanner(f_in); // input file scanner
+			Document doc = null; // the document from the web
 			while(fscan.hasNextLine()){
 				fscan.nextLine();
 				if(fscan.hasNext()) {
@@ -278,9 +283,7 @@ public class VoteGetter {
 					String temp = fscan.next();
 					int index = temp.indexOf(",");
 					temp = temp.substring(0, index - 1);
-					//System.out.println(temp);
 					get_votes_on_bill(doc, temp);
-//					count++;
 				}
 			}
 			write_csv(f_out);
