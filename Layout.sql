@@ -15,17 +15,13 @@ CREATE TABLE DONORS (
     DonorName			char (255)			NOT NULL,
 
 	#Employer if listed, null if not
-    Employer			char (255) 			NULL,
-    
-	#Ocupation if listed, null if not
-    Occupation			char (255) 			NULL,
-
-    #Enum describing how to categorize this person; we may need to expand this
-	TypeGuess			enum('person',
-							 'company',
-                             'committee',
-                             'unknown'
-                        ) DEFAULT 'unknown'	NOT NULL,
+    Role				enum ('Committee',
+							  'Company',
+							  'Organization',
+                              'Person',
+                              'Politician',
+							  'Unknown'
+                              ) DEFAULT 'Unknown' NULL,
     
     #CONSTRAINTS
     CONSTRAINT			DONORS_PK			PRIMARY KEY (DONOR_ID)
@@ -173,6 +169,9 @@ CREATE TABLE DONATIONS (
     
     #The amount of the donation
     Amount				decimal(7,2)		NOT NULL,
+
+	#Whether this is considered self-funding
+    SelfFunding			boolean				NOT NULL,
     
     #CONSTRAINTS
     CONSTRAINT			DONATIONS_PK		PRIMARY KEY (BRIBE_ID),

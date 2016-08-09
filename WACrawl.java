@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,6 +51,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 public class WACrawl {
 	
 	static WebClient client;
+	final static boolean FETCHCSVS = true;
 	final static int SIZE = 1000;
 	
 	public static void main(String[] args) {
@@ -119,13 +121,14 @@ public class WACrawl {
 		final String legislature = "http://web.pdc.wa.gov/MvcQuerySystem/Candidate/leg_candidates?page=";
 		final String contributions = "2016 Detailed Contributions.csv";
 		final String d = ",";
-		final String names[] = new String[1000];
-		final String codes[] = new String[1000];
-		final StringBuilder donations = new StringBuilder("FROM,TO,Date,Amount\n");
-		final boolean fetchcsvs = true;
-		int index = 0, p = 0;
+		final String donationdirectory = "./Donations/";
+		final String names[] = new String[SIZE];
+		final String codes[] = new String[SIZE];
+		final StringBuilder donations = new StringBuilder("DONOR,POLITICIAN,Date,Amount,Role (guess)\n");
+		final HashMap<String, String> donors = new HashMap<String, String>();
+		int index = 0, nameend = 0, p = 0;
 		
-		if (fetchcsvs) try {
+		if (FETCHCSVS) try {
 
 			while (p < 26) {
 				
@@ -149,29 +152,56 @@ public class WACrawl {
 			for (int i = 0; i < index; i++)
 				FileUtils.copyURLToFile(new URL("http://web.pdc.wa.gov/MvcQuerySystem/CandidateData/excel?param=" +
 												codes[i] + "====&year=2016&tab=contributions&type=legislative&page=1&orderBy=&groupBy=&filterBy="),
-										new File(names[i] + contributions));
+										new File(donationdirectory + names[i] + contributions));
 			
 		} catch (IOException e) { e.printStackTrace(); }
 
 		try {
-			
-			for (File f : new File(".").listFiles()) {
-			
-				int nameend = f.getName().indexOf(contributions);
+
+			if (index == 0)
+				for (File f : new File(donationdirectory).listFiles()) {
+					nameend = f.getName().indexOf(contributions);
+					if (nameend!=-1) names[index++] = f.getName().substring(0, nameend);
+				}
+							
+			for (File f : new File(donationdirectory).listFiles()) {
+				
+				nameend = f.getName().indexOf(contributions);
 				
 				if (nameend!=-1) {
 					Scanner scanner = new Scanner(f).useDelimiter(d);
 					String politician = f.getName().substring(0, nameend);
+					String donor = "";
+					String next = "";
 					
 					for (int i = 0; i < 5; i++) scanner.nextLine();
 					while (scanner.hasNext()) {
-						for (int i = 0; i < 4; i++)
-							donations.append((i==1? politician : scanner.next()) + (i==3?"\n":d));
+						for (int i = 0; i < 5; i++) {
+							switch (i) {
+								case 1:
+									next = politician + d;
+									break;
+								case 0:
+									donor = scanner.next();
+									next = donor + d;
+									break;
+								case 2:
+								case 3:
+									next = scanner.next().trim() + d;
+									break;
+								case 4:
+									if (donors.get(donor) == null)
+										donors.put(donor, guessRole(donor, politician, names));
+									next = donors.get(donor) + '\n';
+									break;
+							}
+							donations.append(next);
+						}
 						scanner.nextLine();
 					}
-					
 					scanner.close();
 				}
+								
 			}
 			
 			FileWriter file = new FileWriter("donations.csv");
@@ -181,5 +211,90 @@ public class WACrawl {
 			
 		} catch (IOException e) { e.printStackTrace(); }			
 				
+	}
+
+	public static String guessRole(String donor, String self, String politicians[]) {
+
+		final String norole = "unknown";
+		final String person = "person";
+		final String politician = "politician";
+		final String selffunded = "self";
+		final String titles[] = { "mr", "mrs", "ms", "dr", "jr", "sr", "dds", "md", "dmd", "phd", "ii", "iii", "iv" };
+		final String committees[] = { "committee", "pac", "district", "county", "league", "council", "association", "assoc", "assn", "political", "republican", "democrat" };
+		final String companies[] = { "company", "llc", "corporation", "corp", "co", "inc", "ltd", "ps", "llp", "od", "associate", "law", "office", "clinic", "store", "service", "health", "healthcare", "dental", "farm", "care", "insurance", "mutual", "bank", "energy" };
+		final String otherorg[] = { "organization", "local", "tribe", "tribal", "community", "citizen", "institute", "nw", "northwest", "group", "affair", "wa", "washington", "state", "usa", "america", "fund", "fundraiser", "union" };
+		final String allorganizations[][] = { committees, companies, otherorg };
+
+		String role = norole;
+		donor = donor.toLowerCase();
+		self = self.toLowerCase();
+		boolean titleOrInitial = false;
+		final String tokens[] = donor.split(" ");
+		for (int t = 0; t < tokens.length; t++) {
+			tokens[t] = tokens[t].substring(0, tokens[t].length() -
+					  ((tokens[t].length() > 2 && tokens[t].endsWith("s"))?1:0)).replace(".","").trim();
+			if (tokens[t].length() <= 2) titleOrInitial = true;
+		}
+		int attempt = 0;
+		
+		guess: while (role.equals(norole))
+			
+			switch (attempt++) {
+											
+				case 0: polguess:
+					for (String member : politicians) {
+						if (member == null) break;
+						String pol = member.toLowerCase();
+						double match = 0;
+						for (String token : tokens)
+							if (token.length() == 0) continue;
+							else if (token.length() <= 2 &&
+								pol.substring(pol.length()-token.length(), pol.length()).contains(token)) match += 0.5;
+							else if (token.length() > 2 && token.length() < pol.length())
+								if (token.equals("personal")) match += 5;
+								else if (pol.contains(token)) match += 1;
+								else if (pol.charAt(pol.length()-1) == token.charAt(0)) match += 0.2;
+						if (match >= 2 && (match/(tokens.length - (titleOrInitial?1:0)) > (titleOrInitial ? 0.5 : 0.67))) {
+							role = ((self.equals(pol) || match >= 5) ? selffunded : politician);
+							break polguess;
+						}
+					}
+					break;
+					
+				case 1: orgguess:
+					for (String organizations[] : allorganizations)
+						for (String organization : organizations)
+							for (String token : tokens)
+								if (token.replace(".", "").equals(organization)) {
+									role = organizations[0];
+									break orgguess;
+								}
+					break;
+					
+				case 2: nameguess:
+					switch (tokens.length) {
+						case 1:
+							role = companies[0];
+							break;
+						case 2: case 3:
+							for (String token : tokens)
+								if (!token.matches("[a-z'-]+")) break nameguess;
+							role = person;
+							break;
+						default:
+							for (String token : tokens)
+								for (String title : titles)
+									if (token.equals(title)) {
+										role = person;
+										break nameguess;
+									}
+							break;
+					}
+					break;
+					
+				default: break guess;
+			}
+		
+		return role;
 	}	
 }
