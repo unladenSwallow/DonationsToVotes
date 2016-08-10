@@ -107,10 +107,10 @@ CREATE TABLE LOCATIONS (
 DROP TABLE IF EXISTS ZIPCODES;
 CREATE TABLE ZIPCODES (
 
-	#PRIMARY KEY: Unique identifier that is the district number itself
+	#PRIMARY KEY: Unique identifier that is the zip code in question.
 	ZIPCODE				integer(5)			NOT NULL,
     
-    #FOREIGN KEY: District this zipcode goes to
+    #FOREIGN KEY: The district number associated with this zip code.
     DISTRICT			integer(2)			NULL, #either use NULL for non-WA or use DISTRICT = 50 for out of state and DISTRICT = 0 for unknown
     
     #CONSTRAINTS
