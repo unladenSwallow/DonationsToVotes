@@ -10,6 +10,9 @@ CREATE TABLE DONORS (
 	
     #PRIMARY KEY: Unique identifier but the number is useless
 	DONOR_ID			integer				NOT NULL, #to add: ZEROFILL AUTO_INCREMENT
+
+    #FOREIGN KEY: The district the donor hails from when they donated
+    DISTRICT			integer(2)			NULL, #either use NULL for non-WA or use DISTRICT = 50 for out of state and DISTRICT = 0 for unknown
     
    	#Donor's name in the format "Firstname M Lastname" with M being the middle initial
     DonorName			char (255)			NOT NULL,
@@ -21,11 +24,12 @@ CREATE TABLE DONORS (
                               'Person',
                               'Politician',
 							  'Unknown'
-                              ) DEFAULT 'Unknown'
-											NOT NULL,
+                              )				NOT NULL,
     
     #CONSTRAINTS
-    CONSTRAINT			DONORS_PK			PRIMARY KEY (DONOR_ID)
+    CONSTRAINT			DONORS_PK			PRIMARY KEY (DONOR_ID),
+	CONSTRAINT 		    DONORS_DIST_FK		FOREIGN KEY (DISTRICT)
+											REFERENCES  LOCATIONS (DISTRICT)
     
 );
 
@@ -38,6 +42,9 @@ CREATE TABLE POLITICIANS (
     #PRIMARY KEY: Unique identifier but the number is useless
 	POL_ID				integer				NOT NULL,
 
+    #FOREIGN KEY: The district the politician allegedly represents
+    DISTRICT			integer(2)			NOT NULL,
+
 	#Their name in the format "Firstname M Lastname" with M being the middle initial
     PoliticianName		char (255)			NOT NULL,
     
@@ -47,12 +54,26 @@ CREATE TABLE POLITICIANS (
 						)					NOT NULL,
     
    	#The political party--other should not be used as of this session 
-	Party				enum('Republican',
-							 'Democrat'
+	Party				enum('Democrat',
+							 'Republican',
+                             'Independent',
+                             'Libertarian',
+                             'Other', #aka made up bullshit party
+                             'None'
 						)					NOT NULL,
     
-    #FOREIGN KEY: The district the politician allegedly represents
-    DISTRICT			integer(2)			NOT NULL,
+    #The link to the politicians page or profile
+    Link				text				NULL,
+
+    #Percentage of donations raised out of district (by value)
+    Cuckold				decimal(4,2)		NULL, #suggested use of NULL for members who cuckold score is 0 but have very few (<5?) donations
+
+#information technically available via detailed sql queries; this information also available in csv files but would be redundant
+#    #The amount of money raised
+#    Raised				decimal(11,2)		NOT NULL,
+#
+#    #How many donations the politician has recieved
+#    Donations			integer				NOT NULL,
                             	
     #CONSTRAINTS
 	CONSTRAINT 		    POLITICIANS_PK 		PRIMARY KEY (POL_ID),
@@ -62,6 +83,7 @@ CREATE TABLE POLITICIANS (
 );
 
 #Locations
+#More detailed information on each location
 DROP TABLE IF EXISTS LOCATIONS;
 CREATE TABLE LOCATIONS (
 
@@ -76,8 +98,26 @@ CREATE TABLE LOCATIONS (
     
     #CONSTRAINTS
     CONSTRAINT			LOCATIONS_PK		PRIMARY KEY (DISTRICT),
-    CONSTRAINT			DISTRICT_LIMIT		CHECK (District > 0 AND District < 50)
+    CONSTRAINT			DISTRICT_LIMIT		CHECK (DISTRICT >= 0 AND DISTRICT <= 50) #either use NULL for non-WA or use DISTRICT = 50 for out of state and DISTRICT = 0 for unknown
 
+);
+
+#Zipcodes
+#Table of zipcode-district relationships
+DROP TABLE IF EXISTS ZIPCODES;
+CREATE TABLE ZIPCODES (
+
+	#PRIMARY KEY: Unique identifier that is the district number itself
+	ZIPCODE				integer(5)			NOT NULL,
+    
+    #FOREIGN KEY: District this zipcode goes to
+    DISTRICT			integer(2)			NULL, #either use NULL for non-WA or use DISTRICT = 50 for out of state and DISTRICT = 0 for unknown
+    
+    #CONSTRAINTS
+    CONSTRAINT			ZIPCODES_PK			PRIMARY KEY (ZIPCODE),
+    CONSTRAINT 		    ZIPCODES_DIST_FK	FOREIGN KEY (DISTRICT)
+											REFERENCES  LOCATIONS (DISTRICT)
+    
 );
 
 #Bills table
@@ -108,12 +148,12 @@ CREATE TABLE BILLS (
 DROP TABLE IF EXISTS KEYWORDS;
 CREATE TABLE KEYWORDS (
 
-	#COMPOSITE KEY: FOREIGN KEY: The bill name this topic appears in
-	BILL_NAME			char (32)			NOT NULL,
-
 	#COMPOSITE KEY: FOREIGN KEY: Keyword that describes in short a politically relevant issue (also subject, topic).
 	KEYWORD				char (255)			NOT NULL,
-    
+
+	#COMPOSITE KEY: FOREIGN KEY: The bill name this topic appears in
+	BILL_NAME			char (32)			NOT NULL,
+	
     #CONSTRAINTS
     CONSTRAINT			KEYWORDS_PK			PRIMARY KEY (BILL_NAME, KEYWORD),
 	CONSTRAINT 		    KEYWORDS_BILL_FK 	FOREIGN KEY (BILL_NAME)
@@ -169,9 +209,9 @@ CREATE TABLE DONATIONS (
 	DonationDate		date				NOT NULL,
     
     #The amount of the donation
-    Amount				decimal(7,2)		NOT NULL,
+    Amount				decimal(11,2)		NOT NULL,
 
-	#Whether this is considered self-funding
+	#Whether this is considered self-funding (some self donor ids are not candidate names)
     SelfFunding			boolean				NOT NULL,
     
     #CONSTRAINTS
