@@ -9,7 +9,7 @@ DROP TABLE IF EXISTS DONORS;
 CREATE TABLE DONORS (
 	
     #PRIMARY KEY: Unique identifier but the number is useless
-	DONOR_ID			integer				NOT NULL, #to add: ZEROFILL AUTO_INCREMENT
+	DONOR_ID			integer				NOT NULL AUTO_INCREMENT, #to add: ZEROFILL AUTO_INCREMENT
 
     #FOREIGN KEY: The district the donor hails from when they donated
     DISTRICT			integer(2)			NULL, #either use NULL for non-WA or use DISTRICT = 50 for out of state and DISTRICT = 0 for unknown
@@ -18,12 +18,12 @@ CREATE TABLE DONORS (
     DonorName			char (255)			NOT NULL,
 
 	#Employer if listed, null if not
-    Role				enum ('Committee',
-							  'Company',
-							  'Organization',
-                              'Person',
-                              'Politician',
-							  'Unknown'
+    Role				enum ('committee',
+							  'company',
+							  'organization',
+                              'person',
+                              'unknown',
+                              'self'
                               )				NOT NULL,
     
     #CONSTRAINTS
@@ -40,7 +40,7 @@ DROP TABLE IF EXISTS POLITICIANS;
 CREATE TABLE POLITICIANS (
 
     #PRIMARY KEY: Unique identifier but the number is useless
-	POL_ID				integer				NOT NULL,
+	POL_ID				integer				NOT NULL AUTO_INCREMENT,
 
     #FOREIGN KEY: The district the politician allegedly represents
     DISTRICT			integer(2)			NOT NULL,
@@ -49,24 +49,24 @@ CREATE TABLE POLITICIANS (
     PoliticianName		char (255)			NOT NULL,
     
     #House, Senate, or null
-    Chamber				enum('House',
-							 'Senate'
+    Chamber				enum('STATE SENATOR',
+							 'STATE REPRESENTATIVE'
 						)					NOT NULL,
     
    	#The political party--other should not be used as of this session 
-	Party				enum('Democrat',
-							 'Republican',
-                             'Independent',
-                             'Libertarian',
-                             'Other', #aka made up bullshit party
-                             'None'
+	Party				enum('D',
+							 'R',
+                             'I',
+                             'L',
+                             'O', #aka made up bullshit party
+                             'NO'
 						)					NOT NULL,
     
     #The link to the politicians page or profile
     Link				text				NULL,
 
     #Percentage of donations raised out of district (by value)
-    Cuckold				decimal(4,2)		NULL, #suggested use of NULL for members who cuckold score is 0 but have very few (<5?) donations
+    Cuckold				decimal(5,2)		NULL, #suggested use of NULL for members who cuckold score is 0 but have very few (<5?) donations
 
 #information technically available via detailed sql queries; this information also available in csv files but would be redundant
 #    #The amount of money raised
@@ -173,10 +173,10 @@ CREATE TABLE VOTES (
 	BILL_NAME			char (32)			NOT NULL,
     
     #How the person voted on this bill
-	Vote				enum ('yea',
-							  'nay',
-							  'absent',
-							  'excused'
+	Vote				enum ('y',
+							  'n',
+							  'o'
+							  
 						)					NOT NULL,
                         
 	#Whether this person is also a sponsor of the bill
@@ -197,7 +197,7 @@ DROP TABLE IF EXISTS DONATIONS;
 CREATE TABLE DONATIONS (
 
     #PRIMARY KEY: Unique identifier but the number is useless
-    BRIBE_ID			integer				NOT NULL,
+    BRIBE_ID			integer				NOT NULL AUTO_INCREMENT,
 	
     #FOREIGN KEY: The person giving the money
 	DONOR_ID			integer				NOT NULL,
