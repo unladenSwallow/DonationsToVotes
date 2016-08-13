@@ -1,0 +1,282 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"> 
+
+  <head> 
+
+    <meta http-equiv="content-type" 
+        content="text/html; charset=utf-8"/> 
+		<meta charset="UTF-8" />
+		<meta name="description" content=""/>
+		<meta name="keywords" content=""/>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<link rel="icon" href="http://yourdomain/favicon.ico" type="image/x-icon" />
+		<link rel="stylesheet" href="style.css" type="text/css" media="screen" />
+		<style type="text/css">
+	<title>Donations to Votes</title>
+	</head>
+	<body>			
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/yui/3/build/yui/yui-min.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/prototype/1/prototype.js"></script>
+		<script src=""></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/swfobject/2/swfobject.js"></script>
+		<script src="{SCRIPT}"></script>
+		<script>
+		$(document).ready(function() {
+		
+		});
+		</script>
+
+	<style>
+		/*Top navigation CSS CODE: */
+		
+		body {margin:0;}
+		ul.topnav {
+			display: inline-block;
+		  list-style-type: none;
+		  margin: 0;
+		  padding: 0;
+		  overflow: hidden;
+		  background-color: #333;
+		}
+
+		ul.topnav li {float: left;}
+
+		ul.topnav li a {
+		  display: inline-block;
+		  color: #f2f2f2;
+		  text-align: center;
+		  padding: 14px 16px;
+		  text-decoration: none;
+		  transition: 0.3s;
+		  font-size: 17px;
+		}
+
+		ul.topnav li a:hover {background-color: #555;}
+
+		ul.topnav li.icon {display: none;}
+
+		@media screen and (max-width:680px) {
+			ul.topnav li:not(:first-child) {display: none;}
+			ul.topnav li.icon {
+				float: right;
+				display: inline-block;
+			}
+		}
+
+		@media screen and (max-width:680px) {
+		ul.topnav.responsive {position: relative;}
+			ul.topnav.responsive li.icon {
+				position: absolute;
+				right: 0;
+				top: 0;
+			}
+		
+			ul.topnav.responsive li {
+				float: none;
+				display: inline;
+			}
+		
+			ul.topnav.responsive li a {
+				display: block;
+				text-align: left;
+			}
+		}
+
+		
+		/*Aline text boxes code: */
+		
+		.temp123{
+			text-align:center;
+		}
+		.temp123 > input{
+			text-align:left;
+		}
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+table, th, td {
+     border: 1px solid black;
+}
+	</style>
+				
+		<center>
+
+			<frame scrolling="auto">
+
+			<h1> Investigation Page </h1>
+			<img src="Logo-1.png">
+			<body bgcolor="white">
+
+			
+			<br>
+			<ul class="topnav" id="myTopnav">
+			<option><a class="active" href="#">Home</a></option>
+			<option><a href="#news">News</a></option>
+			<option><a href="#contact">Contact</a></option>
+			<option><a href="#about">About</a></option>
+			<li class="icon">
+			<a href="javascript:void(0);" style="font-size:15px;" onclick="topNavFunction()">â˜°</a>
+			</option>
+			</ul>
+					<br>
+
+<?php
+$dbname = 'sql3130463';
+$username = 'sql3130463';
+$password = 'fjdGi98hP8';
+$servername = 'sql3.freesqldatabase.com';
+// Create connection
+$link = mysql_connect ($servername,$username,$password);
+// Check connection
+if (!$link) {
+     die('Connection failed: ' . mysql_error());
+} 
+$db_selected = mysql_select_db($dbname, $link);
+if (!$db_selected) {
+     die('Could not connect: ' . mysql_error());
+}
+ //           $sql = mysqli_query('SELECT * FROM elected_officials');
+           
+echo 'connected successfully';
+//$username="username";$password="password";$database="your_database";
+//mysql_connect(localhost,$username,$password);
+//@mysql_select_db($database) or die( "Unable to select database");
+
+//$query="SELECT * FROM tablename";
+//$result=mysql_query($query);
+//$num=mysql_numrows($result);mysql_close();
+
+//$sql="SELECT * FROM ";
+
+//if ($result=mysqli_query($link,$sql)){
+  
+ // while ($row=mysqli_fetch_row($result)){
+    
+//    }
+  // Free result set
+//  mysqli_free_result($result);
+//}
+
+mysqli_close($link);
+ ?>
+<p> 
+ <?php echo $output; ?> 
+</p> 
+
+<br>
+
+
+
+
+
+<script language="javascript" type="text/javascript">
+<!--
+var donor = new Array("27", "senator senator", "position one", "position two", "99.4", "93.7", "87.2", "SB 1206", "yea", "nay", "no vote", "1,987,987", "1,687,987", "1,237,987", "987,987", "817,987", "97,987", "87,987","7,987","1,987", "987", "1,987,987", "1,687,987", "1,237,987", "987,987", "817,987", "97,987", "87,987","7,987","1,987", "987", "1,987,987", "1,687,987", "1,237,987", "987,987", "817,987", "97,987", "87,987","7,987","1,987", "987");
+alert(donor.length);
+//  -->
+</script>
+<table BORDER="2" CELLPADDING="2" CELLSPACING="2" WIDTH="100%">
+<th WIDTH="100%"><center>District <script> document.write(donor[0]);</script>
+</center></th>
+<tr></tr></table>
+
+<table>
+<tr>
+<td>
+	<table BORDER="2" CELLPADDING="2" CELLSPACING="2" WIDTH="33%">
+	<tr><th WIDTH="33%">District Senator</th></tr>
+	<tr><td WIDTH="33%"><script> document.write(donor[1]);</script></td></tr>
+	<tr><td WIDTH="33%">Out of District Funding = <script> document.write(donor[4]);</script>%</td></tr>			
+	<tr><th WIDTH="15%">Bill Information</th></tr>
+	<tr><td>Bill #:<script> document.write(donor[7]);</script></td></tr>	
+	<tr><td>vote:<script> document.write(donor[8]);</script></td></tr>
+	<tr><th WIDTH="15%">Financial Information</th></tr>	
+	<td WIDTH="15%">	
+			<form><select multiple size=10>		
+			<option selected><script> document.write("$" + donor[11]);</script></option>
+			<option><script> document.write("$" + donor[12]);</script></option>
+			<option><script> document.write("$" + donor[13]);</script></option>
+			<option><script> document.write("$" + donor[14]);</script></option>
+			<option><script> document.write("$" + donor[15]);</script></option>
+			<option><script> document.write("$" + donor[16]);</script></option>
+			<option><script> document.write("$" + donor[17]);</script></option>
+			<option><script> document.write("$" + donor[18]);</script></option>
+			<option><script> document.write("$" + donor[19]);</script></option>
+			<option><script> document.write("$" + donor[20]).style.textAlign = "right";</script></option>
+			</select>
+			</form> 		
+	</table>
+</td>	
+<td>
+	<table BORDER="2" CELLPADDING="2" CELLSPACING="2" WIDTH="33%">
+	<tr><th>District Representative position 1</th></tr>
+	<tr><td><script> document.write(donor[2]);</script></td></tr>
+	<tr><td WIDTH="33%">Out of District Funding = <script> document.write(donor[5]);</script>%</td></tr>			
+	<tr><th WIDTH="33%">Bill Information</th></tr>
+	<tr><td>Bill #: <script> document.write(donor[7]);</script></td></tr>	
+	<tr><td>vote: <script> document.write(donor[9]);</script></td></tr>
+	<tr><th WIDTH="15%">Financial Information</th></tr>		
+			<td WIDTH="15%">
+			<form><select multiple size=10>
+			<option selected><script> document.write("$" + donor[21]);</script></option>
+			<option><script> document.write("$" + donor[22]);</script></option>
+			<option><script> document.write("$" + donor[23]);</script></option>
+			<option><script> document.write("$" + donor[24]);</script></option>
+			<option><script> document.write("$" + donor[25]);</script></option>
+			<option><script> document.write("$" + donor[26]);</script></option>
+			<option><script> document.write("$" + donor[27]);</script></option>
+			<option><script> document.write("$" + donor[28]);</script></option>
+			<option><script> document.write("$" + donor[29]);</script></option>
+			<option><script> document.write("$" + donor[30]);</script></option>
+			</select>
+			</form> 
+	</table>
+</td>
+<td>
+	<table BORDER="2" CELLPADDING="2" CELLSPACING="2" WIDTH="33%">
+	<tr><th>District Representative position 2</th></tr>
+	<tr><td><script> document.write(donor[3]);</script></td></tr>
+	<tr><td WIDTH="33%">Out of District Funding = <script> document.write(donor[6]);</script>%</td></tr>			
+	<tr><th WIDTH="33%">Bill Information</th></tr>
+	<tr><td>Bill #:<script> document.write(donor[7]);</script></td></tr>	
+	<tr><td>vote: <script> document.write(donor[10]);</script></td></tr>
+	<tr><th WIDTH="15%">Financial Information</th></tr>		
+			<td WIDTH="15%">
+			<form><select multiple size=10>
+			<option selected><script> document.write("$" + donor[31]);</script></option>
+			<option><script> document.write("$" + donor[32]);</script></option>
+			<option><script> document.write("$" + donor[33]);</script></option>
+			<option><script> document.write("$" + donor[34]);</script></option>
+			<option><script> document.write("$" + donor[35]);</script></option>
+			<option><script> document.write("$" + donor[36]);</script></option>
+			<option><script> document.write("$" + donor[37]);</script></option>
+			<option><script> document.write("$" + donor[38]);</script></option>
+			<option><script> document.write("$" + donor[39]);</script></option>
+			<option><script> document.write("$" + donor[40]);</script></option>
+			</select>
+			</form> 
+			</table>
+</td>
+</tr>
+</table>
+		
+		</style>
+	</body>
+</html>
