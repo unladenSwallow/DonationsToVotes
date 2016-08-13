@@ -118,12 +118,21 @@ public class VoteGetter {
 		String old_str = ""; // for appending first initial, when needed
 		while(scan.hasNext()){
 			String str = scan.next();
+			String temp = "";
 			if(!invalid_words.contains(str)) {
 				if(str.endsWith(",")) {
 					str = str.substring(0, str.indexOf(","));
 					if(str.endsWith(".")) { // if ends with "." it is an intial, append it to the previous name
 						insert_set.remove(old_str);
 						str = old_str.substring(0, old_str.indexOf("_")) + " " + str;
+					}
+				}else if(scan.hasNext() && !((temp = scan.next()).equals("and"))) {
+					str = str + " " + temp;
+					while(scan.hasNext() && !str.endsWith(",")){
+						str = str + " " + scan.next();
+					}
+					if(str.endsWith(",")) {
+						str = str.substring(0, str.indexOf(","));
 					}
 				}
 				str += ("_" + chamber);
@@ -206,7 +215,8 @@ public class VoteGetter {
 		Iterator itr = votes.iterator();
 		if(itr.hasNext()) {
 			String name = (String) itr.next();
-			sb.append(name.substring(0, name.indexOf("_")));
+			name = name.substring(0, name.indexOf("_")); 
+			sb.append(name);
 		}
 		while(itr.hasNext()) {
 			String name = (String) itr.next();
@@ -293,5 +303,3 @@ public class VoteGetter {
 		}
 	}
 }
-
-
