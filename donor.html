@@ -114,7 +114,12 @@ tr:nth-child(even) {
 table, th, td {
      border: 1px solid black;
 }
-	</style>
+select option selected {
+padding: 13px;
+text-align: right;
+}
+
+</style>
 				
 		<center>
 
@@ -155,41 +160,13 @@ if (!$db_selected) {
  //           $sql = mysqli_query('SELECT * FROM elected_officials');
            
 echo 'connected successfully';
-//$username="username";$password="password";$database="your_database";
-//mysql_connect(localhost,$username,$password);
-//@mysql_select_db($database) or die( "Unable to select database");
-
-//$query="SELECT * FROM tablename";
-//$result=mysql_query($query);
-//$num=mysql_numrows($result);mysql_close();
-
-//$sql="SELECT * FROM ";
-
-//if ($result=mysqli_query($link,$sql)){
-  
- // while ($row=mysqli_fetch_row($result)){
-    
-//    }
-  // Free result set
-//  mysqli_free_result($result);
-//}
-
-mysqli_close($link);
- ?>
-<p> 
- <?php echo $output; ?> 
-</p> 
+?>
 
 <br>
-
-
-
-
-
 <script language="javascript" type="text/javascript">
 <!--
 var donor = new Array("27", "senator senator", "position one", "position two", "99.4", "93.7", "87.2", "SB 1206", "yea", "nay", "no vote", "1,987,987", "1,687,987", "1,237,987", "987,987", "817,987", "97,987", "87,987","7,987","1,987", "987", "1,987,987", "1,687,987", "1,237,987", "987,987", "817,987", "97,987", "87,987","7,987","1,987", "987", "1,987,987", "1,687,987", "1,237,987", "987,987", "817,987", "97,987", "87,987","7,987","1,987", "987");
-alert(donor.length);
+//alert(donor.length);
 //  -->
 </script>
 <table BORDER="2" CELLPADDING="2" CELLSPACING="2" WIDTH="100%">
@@ -208,10 +185,10 @@ alert(donor.length);
 	<tr><td>Bill #:<script> document.write(donor[7]);</script></td></tr>	
 	<tr><td>vote:<script> document.write(donor[8]);</script></td></tr>
 	<tr><th WIDTH="15%">Financial Information</th></tr>	
-	<td WIDTH="15%">	
-			<form><select multiple size=10>		
-			<option selected><script> document.write("$" + donor[11]);</script></option>
-			<option><script> document.write("$" + donor[12]);</script></option>
+	<tr align="right"><td WIDTH="25%">	
+			<form><select dir="rtl" multiple size=10>		
+			<option><script> document.write("$" + donor[11]);</script></option>
+			<option><script>document.write("$" + donor[12]);</script></option>
 			<option><script> document.write("$" + donor[13]);</script></option>
 			<option><script> document.write("$" + donor[14]);</script></option>
 			<option><script> document.write("$" + donor[15]);</script></option>
@@ -219,9 +196,10 @@ alert(donor.length);
 			<option><script> document.write("$" + donor[17]);</script></option>
 			<option><script> document.write("$" + donor[18]);</script></option>
 			<option><script> document.write("$" + donor[19]);</script></option>
-			<option><script> document.write("$" + donor[20]).style.textAlign = "right";</script></option>
+			<option><script> document.write("$" + donor[20]);</script></option>
 			</select>
-			</form> 		
+			</form> 
+	        </td></tr>
 	</table>
 </td>	
 <td>
@@ -233,9 +211,9 @@ alert(donor.length);
 	<tr><td>Bill #: <script> document.write(donor[7]);</script></td></tr>	
 	<tr><td>vote: <script> document.write(donor[9]);</script></td></tr>
 	<tr><th WIDTH="15%">Financial Information</th></tr>		
-			<td WIDTH="15%">
-			<form><select multiple size=10>
-			<option selected><script> document.write("$" + donor[21]);</script></option>
+	<tr align="right"><td WIDTH="25%">
+			<form><select dir="rtl" multiple size=10>
+			<option><script> document.write("$" + donor[21]);</script></option>
 			<option><script> document.write("$" + donor[22]);</script></option>
 			<option><script> document.write("$" + donor[23]);</script></option>
 			<option><script> document.write("$" + donor[24]);</script></option>
@@ -247,6 +225,7 @@ alert(donor.length);
 			<option><script> document.write("$" + donor[30]);</script></option>
 			</select>
 			</form> 
+			</td></tr>
 	</table>
 </td>
 <td>
@@ -257,10 +236,10 @@ alert(donor.length);
 	<tr><th WIDTH="33%">Bill Information</th></tr>
 	<tr><td>Bill #:<script> document.write(donor[7]);</script></td></tr>	
 	<tr><td>vote: <script> document.write(donor[10]);</script></td></tr>
-	<tr><th WIDTH="15%">Financial Information</th></tr>		
-			<td WIDTH="15%">
-			<form><select multiple size=10>
-			<option selected><script> document.write("$" + donor[31]);</script></option>
+	<tr><th WIDTH="15%">Financial Information</th></tr>			
+	<tr align="right"><td WIDTH="25%">
+			<form><select dir="rtl"multiple size=10>
+			<option><script> document.write("$" + donor[31]);</script></option>
 			<option><script> document.write("$" + donor[32]);</script></option>
 			<option><script> document.write("$" + donor[33]);</script></option>
 			<option><script> document.write("$" + donor[34]);</script></option>
@@ -269,9 +248,10 @@ alert(donor.length);
 			<option><script> document.write("$" + donor[37]);</script></option>
 			<option><script> document.write("$" + donor[38]);</script></option>
 			<option><script> document.write("$" + donor[39]);</script></option>
-			<option><script> document.write("$" + donor[40]);</script></option>
+			<option><script>document.write("$" + donor[40]);</script></option>
 			</select>
 			</form> 
+			</td></tr>
 			</table>
 </td>
 </tr>
