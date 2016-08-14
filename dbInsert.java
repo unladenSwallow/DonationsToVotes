@@ -404,7 +404,7 @@ public class dbInsert {
         System.out.println("Number of Vote Entries " + csv.size());
         
         long startTime = System.currentTimeMillis();
-        String insert = "insert into votes (POL_ID,BILL_NAME,Vote,Sponsor) SELECT IFNULL(9999,POL_ID),IFNULL('NOT FOUND',BILL_NAME),?,? FROM politicians,bills WHERE PoliticianName LIKE ? AND BILL_NAME LIKE ?";
+        String insert = "insert into votes (POL_ID,BILL_NAME,Vote,Sponsor) SELECT IFNULL(9999,POL_ID),BILL_NAME,?,? FROM politicians,bills WHERE PoliticianName LIKE ? AND BILL_NAME LIKE ?";
         
         stmt = con.prepareStatement(insert);
         
