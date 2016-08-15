@@ -70,7 +70,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 /**
  * @author Mark Peters
- * @version nowwithcorruptionindex!
+ * @version nowwithcorruptionindex!+
  * 
  * This program is designed to crawl several different websites to get information on the Washington state Legislature.
  * There is no starting information or user input needed (other than external jars; see above) other than running it.
@@ -82,7 +82,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
  * Everything is exported to csv files with data correlating (but exceeding) fields required in our group's Layout.sql
  * Additionally, the program does is crawl the online bills database by topic and generates keyword-bill associations.
  * 
- * Finally, included within 
+ * Finally, included within the program is a separate class called NameGuess, which attempts to guess what an entity is
+ * (company, committee, organization, person, or a member of a group or itself), given a name.
  */
 class WACrawl {
 	
@@ -94,7 +95,7 @@ class WACrawl {
 	final static boolean OUTPUT_PROGRESS = true;
 	
 	final static boolean DOWNLOAD_KEYWORDS = false;
-	final static boolean DOWNLOAD_POLITICIANS = true;
+	final static boolean DOWNLOAD_POLITICIANS = false;
 	final static boolean DOWNLOAD_DONATIONS = false;
 	final static boolean DOWNLOAD_ZIPCODES = false;
 	
@@ -253,7 +254,7 @@ class WACrawl {
 	final static String SELF_FUNDED = "self";
 	
 	///////////////////////////////////
-	///////////////// MANIPULABLES manipulable 
+	///////////////// DYNAMIC VARIABLES
 	///////////////////////////////////
 
 	final static String keywords[] = new String[SIZE];
