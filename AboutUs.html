@@ -1,0 +1,431 @@
+<html>
+	<head>
+		<title>TCSS445 Donations to Votes</title>
+		<link rel="icon" href="icon.jpg">
+	</head>
+	
+	
+	
+	
+	
+	<style>
+		/*Top navigation CSS CODE: */
+		
+		body {margin:0;}
+		ul.topnav {
+			display: inline-block;
+		  list-style-type: none;
+		  margin: 0;
+		  padding: 0;
+		  overflow: hidden;
+		  background-color: #000099;
+		}
+
+		ul.topnav li {float: left;}
+
+		ul.topnav li a {
+		  display: inline-block;
+		  color: #f2f2f2;
+		  text-align: center;
+		  padding: 12px 14px;
+		  text-decoration: none;
+		  transition: 0.3s;
+		  font-size: 17px;
+		}
+
+		ul.topnav li a:hover {background-color: #FF0000;}
+
+		ul.topnav li.icon {display: none;}
+
+		@media screen and (max-width:680px) {
+			ul.topnav li:not(:first-child) {display: none;}
+			ul.topnav li.icon {
+				float: right;
+				display: inline-block;
+			}
+		}
+
+		@media screen and (max-width:680px) {
+		ul.topnav.responsive {position: relative;}
+			ul.topnav.responsive li.icon {
+				position: absolute;
+				right: 0;
+				top: 0;
+			}
+		
+			ul.topnav.responsive li {
+				float: none;
+				display: inline;
+			}
+		
+			ul.topnav.responsive li a {
+				display: block;
+				text-align: left;
+			}
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		/*Slide show CSS code: */
+		
+		* {box-sizing:border-box}
+			body {font-family: Verdana,sans-serif;margin:0}
+
+			/* Slideshow container */
+			.slideshow-container {
+			  max-width: 350px;
+			  position: relative;
+			  margin: auto;
+			}
+
+			/* Next & previous buttons */
+			.prev, .next {
+			  cursor: pointer;
+			  position: absolute;
+			  top: 0;
+			  top: 50%;
+			  width: auto;
+			  padding: 16px;
+			  margin-top: -22px;
+			  color: white;
+			  font-weight: bold;
+			  font-size: 18px;
+			  transition: 0.6s ease;
+			  border-radius: 0 3px 3px 0;
+			}
+
+			/* Position the "next button" to the right */
+			.next {
+			  right: 0;
+			  border-radius: 3px 0 0 3px;
+			}
+
+			/* On hover, add a black background color with a little bit see-through */
+			.prev:hover, .next:hover {
+			  background-color: rgba(0,0,0,0.8);
+			}
+
+			/* Caption text */
+			.text {
+			  color: #f2f2f2;
+			  font-size: 15px;
+			  padding: 8px 12px;
+			  position: absolute;
+			  bottom: 8px;
+			  width: 100%;
+			  text-align: center;
+			}
+
+			/* Number text (1/3 etc) */
+			.numbertext {
+			  color: #f2f2f2;
+			  font-size: 12px;
+			  padding: 8px 12px;
+			  position: absolute;
+			  top: 0;
+			}
+
+			/* The dots/bullets/indicators */
+			.dot {
+			  cursor:pointer;
+			  height: 13px;
+			  width: 13px;
+			  margin: 0 2px;
+			  background-color: #bbb;
+			  border-radius: 50%;
+			  display: inline-block;
+			  transition: background-color 0.6s ease;
+			}
+
+			.active, .dot:hover {
+			  background-color: #717171;
+			}
+
+			/* Fading animation */
+			.fade {
+			  -webkit-animation-name: fade;
+			  -webkit-animation-duration: 1.5s;
+			  animation-name: fade;
+			  animation-duration: 1.5s;
+			}
+
+			@-webkit-keyframes fade {
+			  from {opacity: .4}
+			  to {opacity: 1}
+			}
+
+			@keyframes fade {
+			  from {opacity: .4}
+			  to {opacity: 1}
+			}
+
+			/* On smaller screens, decrease text size */
+			@media only screen and (max-width: 300px) {
+			  .slprev, .slnext,.text {font-size: 11px}
+			}
+			
+			
+			
+			/*Fonts:*/
+			p.serif {
+				font-family: Impact, Charcoal, sans-serif;
+			}
+			
+			p.sansserif {
+				font-family: "Comic Sans MS", cursive, sans-serif
+			}
+		
+		
+		</style>
+	
+	<body>
+		<center>
+
+			<frame scrolling="auto">
+			<font color="ADD8E6">
+			<br><h1>About Us</h1>
+			</font>
+			<body bgcolor="4b2e83">
+
+			
+			<br>
+			<ul class="topnav" id="myTopnav">
+			<li><a href="homePage.html">Home</a></li>
+			<li><a href="TechSupport.html">Tech Support</a></li>
+			<li><a href="Contact.html">Contact</a></li>
+			<li><a class="active" href="#about">About</a></li>
+			<li class="icon">
+			<a href="javascript:void(0);" style="font-size:15px;" onclick="topNavFunction()">&#9776;</a>
+			</li>
+			</ul>
+			
+		</center>
+		
+		<br>
+		
+		
+		</br>
+		
+		<font color="ADD8E6">
+		
+		<div class="slideshow-container">
+
+			<div class="mySlides fade">
+			  <div class="numbertext">1 / 7</div>
+			  <img src="Leslie.jpg" style="width:100%">
+			  <div class="text"><p class="sansserif"><font size="6" color="#FFA500"><b>Leslie Pedro</b></font></p></div>
+			</div>
+
+			<div class="mySlides fade">
+			  <div class="numbertext">2 / 7</div>
+			  <img src="Mark.png" style="width:100%">
+			  <div class="text"><p class="sansserif"><font size="6" color="#0000A0"><b>Mark Peters</b></font></div>
+			</div>
+
+			<div class="mySlides fade">
+			  <div class="numbertext">3 / 7</div>
+			  <img src="Patrick.jpeg" style="width:100%">
+			  <div class="text"><p class="sansserif"><font size="6" color="#00FF00"><b>Patrick Sanchez</b></font></div>
+			</div>
+
+			<div class="mySlides fade">
+			  <div class="numbertext">4 / 7</div>
+			  <img src="https://canvas.uw.edu/images/thumbnails/36992993/VwdJ8zBMQ9J3yCq9MuQzwliEE54lIy1PnDvb3yKl" style="width:100%">
+			  <div class="text"><p class="sansserif"><font size="6" color="#ADD8E6"><b>Robert Kariuki</b></font></div>
+			</div>
+			
+			<div class="mySlides fade">
+			  <div class="numbertext">5 / 7</div>
+			  <img src="Sally.jpg" style="width:100%">
+			  <div class="text"><p class="sansserif"><font size="6" color="#FF00FF"><b>Sally Budack</b></font></div>
+			</div>
+			
+			<div class="mySlides fade">
+			  <div class="numbertext">6 / 7</div>
+			  <img src="Gabriela.jpg" style="width:100%">
+			  <div class="text"><p class="sansserif"><font size="6" color="#800000"><b>Gabriela Orozco</b></font></div>
+			</div>
+			
+			<div class="mySlides fade">
+			  <div class="numbertext">7 / 7</div>
+			  <img src="Brandon.jpg" style="width:100%">
+			  <div class="text"><p class="sansserif"><font size="6" color="#A52A2A"><b>Brandon Gibbons</b></font></div>
+			</div>
+			
+			
+
+			<a class="prev" onclick="plusSlides(-1)">❮</a>
+			<a class="next" onclick="plusSlides(1)">❯</a>
+
+			</div>
+			<br>
+
+			<div style="text-align:center">
+			  <span class="dot" onclick="currentSlide(1)"></span>
+			  <span class="dot" onclick="currentSlide(2)"></span>
+			  <span class="dot" onclick="currentSlide(3)"></span>
+			  <span class="dot" onclick="currentSlide(4)"></span>
+			  <span class="dot" onclick="currentSlide(5)"></span>
+			  <span class="dot" onclick="currentSlide(6)"></span>
+			  <span class="dot" onclick="currentSlide(7)"></span>
+			  
+			</div>
+			
+			
+			
+			
+			
+			
+			<center><p class="sansserif"><font size="6"><b>Engineers:</b></font></center>
+			
+			<blockquote>
+			<ul>
+			
+			<li><p class="sansserif"><font size="6"><b>Leslie Pedro</b></font>
+			<br> I am graduating this December from UW Tacoma with a degree in Computer Science & Systems.
+			</li>
+			
+			
+			<br>
+			
+			</br>
+			
+			<li><font size="6"><b>Mark Peters</b></font>
+			<br>Mark is a UWT student and is graduating early 2017.
+			</li>
+			
+			<br>
+			
+			</br>
+			
+			<li><font size="6"><b>Patrick Sanchez</b></font>
+			<br>I will be graduating in 2017 with a degree in Computer Science & Systems.  
+			</li>
+			
+			
+			<br>
+			
+			</br>
+			<li><font size="6"><b>Robert Kariuki</b></font>
+			<br>Born and raised in Mombasa, Kenya a coastal region. 
+			Moved to the states in 2010. I use my down time to play 
+			soccer,basketball and most of just community volunteering.
+			</li>
+			
+			
+			<br>
+			
+			</br>
+			<li><font size="6"><b>Sally Budack</b></font>
+			<br>I will be graduating in 2017 from UWT with CSS degree so I can write EHRs.
+			</li>
+			
+			
+			<br>
+			
+			</br>
+			<li><font size="6"><b>Gabriela Orozco</b></font>
+			<br>I am a senior at the University of Washington majoring in CSS. I will be 
+			graduating in December 2016. One more quarter!
+			</li>
+			</ul>
+			</blockquote>
+			
+			
+			<center><p class="sansserif"><font size="5"><b>Documentation:</b></font></center>
+			
+			
+			
+			<blockquote>
+			<ul>
+			<li><font size="5"><b>Brandon Gibbons</b></font>
+			
+			<br>I'm a new senior in the css program at the University 
+			of Washington. A married father of two who is hoping to 
+			help create technology that can improve human life, and more 
+			epcifically those with an Autism Spectrum Disorder, just like 
+			my eldest son. 
+			</li>
+			</ul>
+			</blockquote>
+			
+			<br>
+			
+			
+			
+			</br>
+			
+			<center><font size="4"><b>Thank you <u>Sonia Sarai<u> for finding us a Domain!</b></font>
+			</center>
+			</p>
+			
+			<br>
+			
+			</br>
+			
+		
+		
+		<script>
+			/*Top navigation JavaScript code: */
+			function topNavFunction() {
+				var x = document.getElementById("myTopnav");
+				if (x.className === "topnav") {
+					x.className += " responsive";
+				} else {
+					x.className = "topnav";
+				}
+			}
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			/*Slide Show JavaScript code: */
+			var slideIndex = 1;
+			showSlides(slideIndex);
+
+			function plusSlides(n) {
+			  showSlides(slideIndex += n);
+			}
+
+			function currentSlide(n) {
+			  showSlides(slideIndex = n);
+			}
+
+			function showSlides(n) {
+			  var i;
+			  var slides = document.getElementsByClassName("mySlides");
+			  var dots = document.getElementsByClassName("dot");
+			  if (n > slides.length) {slideIndex = 1}
+			  if (n < 1) {slideIndex = slides.length}
+			  for (i = 0; i < slides.length; i++) {
+				  slides[i].style.display = "none";
+			  }
+			  for (i = 0; i < dots.length; i++) {
+				  dots[i].className = dots[i].className.replace(" active", "");
+			  }
+			  slides[slideIndex-1].style.display = "block";
+			  dots[slideIndex-1].className += " active";
+			}
+			
+		
+		</script>
+	
+	
+	
+	</body>
+</html>

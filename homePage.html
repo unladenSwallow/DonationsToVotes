@@ -1,0 +1,134 @@
+<html>
+	<head>
+		<title>Donation$ to Vote$</title>
+		<link rel="icon" href="icon.jpg">
+	</head>
+	<body background="flagbackground.jpg">
+
+
+	<style>
+		/*Top navigation CSS CODE: */
+		
+		body {margin:0;}
+		ul.topnav {
+			display: inline-block;
+		  list-style-type: none;
+		  margin: 0;
+		  padding: 0;
+		  overflow: hidden;
+		  background-color: #000099;
+		}
+
+		ul.topnav li {float: left;}
+
+		ul.topnav li a {
+		  display: inline-block;
+		  color: #f2f2f2;
+		  text-align: center;
+		  padding: 12px 14px;
+		  text-decoration: none;
+		  transition: 0.3s;
+		  font-size: 17px;
+		}
+
+		ul.topnav li a:hover {background-color: #FF0000;}
+
+		ul.topnav li.icon {display: none;}
+
+		@media screen and (max-width:680px) {
+			ul.topnav li:not(:first-child) {display: none;}
+			ul.topnav li.icon {
+				float: right;
+				display: inline-block;
+			}
+		}
+
+		@media screen and (max-width:680px) {
+		ul.topnav.responsive {position: relative;}
+			ul.topnav.responsive li.icon {
+				position: absolute;
+				right: 0;
+				top: 0;
+			}
+		
+			ul.topnav.responsive li {
+				float: none;
+				display: inline;
+			}
+		
+			ul.topnav.responsive li a {
+				display: block;
+				text-align: left;
+			}
+		}
+		
+		/* Center the text boxes code: */
+		
+		.temp123{
+			text-align:center;
+		}
+		.temp123 > input{
+			text-align:left;
+		}
+		
+	</style>	
+	<body >				
+		<center>
+			<frame scrolling="auto">
+			<h1> Home </h1>
+			<img height="300" width="650" src="dotes2votesLogo.jpg">
+			<body bgcolor="white">			
+			<br>
+			<ul class="topnav" id="myTopnav">
+			<li><a class="active" href="#home">Home</a></li>
+			<li><a href="TechSupport.html">Tech Support</a></li>
+			<li><a href="Contact.html">Contact</a></li>
+			<li><a href="AboutUs.html">About</a></li>
+			<li class="icon">
+			<a href="javascript:void(0);" style="font-size:15px;" onclick="topNavFunction()">&#9776;</a>
+			</li>
+			</ul>					
+			<br>
+			</br>
+			<form action="investigate.html" method="get">
+			<b>Search by <u>your zip code OR</u> Elected Official's name: </b>
+			<br><br>
+			<div class="temp123">
+			
+			<input type="text"  name="zip code or name.."><br>
+
+			</input>
+	
+			</div>
+			<br>
+
+			<input type="submit" value="Submit">
+			</form> 
+			<br>
+			<br><b>Click submit to investigate how your elected official voted on this bill.</b>
+			
+
+			
+			
+
+		</center>
+
+		<script>
+			/*Top navigation JavaScript code: */
+			function topNavFunction() {
+				var x = document.getElementById("myTopnav");
+				if (x.className === "topnav") {
+					x.className += " responsive";
+				} else {
+					x.className = "topnav";
+				}
+			}
+		onkeyup="myFunction()"
+		
+		</script>
+		
+		
+	</body>
+
+</html>
+

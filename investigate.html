@@ -1,0 +1,273 @@
+<html>
+	<head>
+		<title>Donation$ to Vote$</title>
+		<link rel="icon" href="icon.jpg">
+	</head>
+	<body background="flagbackground.jpg">
+	<style>
+		/*Top navigation CSS CODE: */
+		
+		body {margin:0;}
+		ul.topnav {
+			display: inline-block;
+		  list-style-type: none;
+		  margin: 0;
+		  padding: 0;
+		  overflow: hidden;
+		  background-color: #000099;
+		}
+
+		ul.topnav li {float: left;}
+
+		ul.topnav li a {
+		  display: inline-block;
+		  color: #f2f2f2;
+		  text-align: center;
+		  padding: 12px 14px;
+		  text-decoration: none;
+		  transition: 0.3s;
+		  font-size: 17px;
+		}
+
+		ul.topnav li a:hover {background-color: #FF0000;}
+
+		ul.topnav li.icon {display: none;}
+
+		@media screen and (max-width:680px) {
+			ul.topnav li:not(:first-child) {display: none;}
+			ul.topnav li.icon {
+				float: right;
+				display: inline-block;
+			}
+		}
+
+		@media screen and (max-width:680px) {
+		ul.topnav.responsive {position: relative;}
+			ul.topnav.responsive li.icon {
+				position: absolute;
+				right: 0;
+				top: 0;
+			}
+		
+			ul.topnav.responsive li {
+				float: none;
+				display: inline;
+			}
+		
+			ul.topnav.responsive li a {
+				display: block;
+				text-align: left;
+			}
+		}
+		
+		/* Center the text boxes code: */
+		
+		.temp123{
+			text-align:center;
+		}
+		.temp123 > input{
+			text-align:left;
+		}
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+table, th, td {
+     border: 1px solid black;
+}
+select option selected {
+padding: 13px;
+text-align: right;
+}
+
+</style>				
+		<center>
+			<frame scrolling="auto">
+			<h1> Inve$tigation Page </h1>
+			<body bgcolor="white">
+			<br></br>
+			<ul class="topnav" id="myTopnav">
+			<li><a class="active" href="homePage.html">Home</a></li>
+			<li><a href="TechSupport.html">Tech Support</a></li>
+			<li><a href="Contact.html">Contact</a></li>
+			<li><a href="AboutUs.html">About</a></li>
+			<li class="icon">
+			<a href="javascript:void(0);" style="font-size:15px;" onclick="topNavFunction()">&#9776;</a>
+			</li>
+			</ul>
+					<br>
+
+<?php
+$dbname = 'sql3130463';
+$username = 'sql3130463';
+$password = 'fjdGi98hP8';
+$servername = 'sql3.freesqldatabase.com';
+// Create connection
+$link = mysql_connect ($servername,$username,$password);
+// Check connection
+if (!$link) {
+     die('Connection failed: ' . mysql_error());
+} 
+$db_selected = mysql_select_db($dbname, $link);
+if (!$db_selected) {
+     die('Could not connect: ' . mysql_error());
+}
+ //           $sql = mysqli_query('SELECT * FROM elected_officials');
+           
+echo 'connected successfully';
+?>
+
+<br>
+<script language="javascript" type="text/javascript">
+<!--
+var donor = new Array("27", "senator senator", "position one", "position two", "99.4", "93.7", "87.2", "SB 1206", "yea", "nay", "no vote", "1,987,987", "1,687,987", "1,237,987", "987,987", "817,987", "97,987", "87,987","7,987","1,987", "987", "1,987,987", "1,687,987", "1,237,987", "987,987", "817,987", "97,987", "87,987","7,987","1,987", "987", "1,987,987", "1,687,987", "1,237,987", "987,987", "817,987", "97,987", "87,987","7,987","1,987", "987");
+
+</script>
+<?php
+echo input;
+?>
+	<body>
+		<FORM NAME="bnum">
+			<INPUT TYPE="hidden" NAME="billsvoted">
+		</FORM>
+
+		<SCRIPT LANGUAGE="javascript">
+
+			var locate = window.location
+			document.bnum.billsvoted.value = locate
+
+			var text = document.bnum.billsvoted.value
+
+			function delineate(str){
+			theleft = str.indexOf("=") + 1;
+			return(str.substring(theleft));
+			}
+			
+			function wordsplit(str){
+			 var charect = "";
+			 for (var n = 1 ; n <= str.length ; n++){
+			 if (str.substring(n-1,n) == "+"){
+			 charect+=" "; 
+			 }else {
+			 charect+=str.substring(n-1,n); 
+				}
+			 }
+			 return charect;
+			 }
+    </script>
+
+
+<br>
+</br>
+<table BORDER="2" CELLPADDING="2" CELLSPACING="2" WIDTH="100%">
+<th><center>District <script> document.write(donor[0]);
+</script></center></th><th><center><a href="billsearch.html">search for a bill</a></center></th>
+<tr></tr></table>
+
+<table WIDTH="100%">
+<tr>
+<td>
+	<table BORDER="2" CELLPADDING="2" CELLSPACING="2" WIDTH="33%">
+	<tr><th WIDTH="33%">District Senator</th></tr>
+	<tr><td WIDTH="33%"><script> document.write(donor[1]);</script></td></tr>
+	<tr><td WIDTH="33%">Out of District Funding = <script> document.write(donor[4]);</script>%</td></tr>			
+	<tr><th WIDTH="15%">Bill Information</th></tr>
+	<tr><td><script> document.write("Bill #: " +wordsplit(delineate(text)));</script></td></tr>	
+	<tr><td>vote:<script> document.write(donor[8]);</script></td></tr>
+	<tr><th WIDTH="15%">Financial Information</th></tr>	
+	<tr align="right"><td WIDTH="25%">	
+			<form><select dir="rtl" multiple size=10>		
+			<option><script> document.write("$" + donor[11]);</script></option>
+			<option><script>document.write("$" + donor[12]);</script></option>
+			<option><script> document.write("$" + donor[13]);</script></option>
+			<option><script> document.write("$" + donor[14]);</script></option>
+			<option><script> document.write("$" + donor[15]);</script></option>
+			<option><script> document.write("$" + donor[16]);</script></option>
+			<option><script> document.write("$" + donor[17]);</script></option>
+			<option><script> document.write("$" + donor[18]);</script></option>
+			<option><script> document.write("$" + donor[19]);</script></option>
+			<option><script> document.write("$" + donor[20]);</script></option>
+			</select>
+			</form> 
+	        </td></tr>
+	</table>
+</td>	
+<td>
+	<table BORDER="2" CELLPADDING="2" CELLSPACING="2" WIDTH="33%">
+	<tr><th>District Representative position 1</th></tr>
+	<tr><td><script> document.write(donor[2]);</script></td></tr>
+	<tr><td WIDTH="33%">Out of District Funding = <script> document.write(donor[5]);</script>%</td></tr>			
+	<tr><th WIDTH="33%">Bill Information</th></tr>
+	<tr><td><script> document.write("Bill #: " +wordsplit(delineate(text)));</script></td></tr>		
+	<tr><td>vote: <script> document.write(donor[9]);</script></td></tr>
+	<tr><th WIDTH="15%">Financial Information</th></tr>		
+	<tr align="right"><td WIDTH="25%">
+			<form><select dir="rtl" multiple size=10>
+			<option><script> document.write("$" + donor[21]);</script></option>
+			<option><script> document.write("$" + donor[22]);</script></option>
+			<option><script> document.write("$" + donor[23]);</script></option>
+			<option><script> document.write("$" + donor[24]);</script></option>
+			<option><script> document.write("$" + donor[25]);</script></option>
+			<option><script> document.write("$" + donor[26]);</script></option>
+			<option><script> document.write("$" + donor[27]);</script></option>
+			<option><script> document.write("$" + donor[28]);</script></option>
+			<option><script> document.write("$" + donor[29]);</script></option>
+			<option><script> document.write("$" + donor[30]);</script></option>
+			</select>
+			</form> 
+			</td></tr>
+	</table>
+</td>
+<td>
+	<table BORDER="2" CELLPADDING="2" CELLSPACING="2" WIDTH="33%">
+	<tr><th>District Representative position 2</th></tr>
+	<tr><td><script> document.write(donor[3]);</script></td></tr>
+	<tr><td WIDTH="33%">Out of District Funding = <script> document.write(donor[6]);</script>%</td></tr>			
+	<tr><th WIDTH="33%">Bill Information</th></tr>
+	<tr><td><script> document.write("Bill #: " +wordsplit(delineate(text)));</script></td></tr>	
+	<tr><td>vote: <script> document.write(donor[10]);</script></td></tr>
+	<tr><th WIDTH="15%">Financial Information</th></tr>			
+	<tr align="right"><td WIDTH="25%">
+			<form><select dir="rtl"multiple size=10>
+			<option><script> document.write("$" + donor[31]);</script></option>
+			<option><script> document.write("$" + donor[32]);</script></option>
+			<option><script> document.write("$" + donor[33]);</script></option>
+			<option><script> document.write("$" + donor[34]);</script></option>
+			<option><script> document.write("$" + donor[35]);</script></option>
+			<option><script> document.write("$" + donor[36]);</script></option>
+			<option><script> document.write("$" + donor[37]);</script></option>
+			<option><script> document.write("$" + donor[38]);</script></option>
+			<option><script> document.write("$" + donor[39]);</script></option>
+			<option><script>document.write("$" + donor[40]);</script></option>
+			</select>
+			</form> 
+			</td></tr>
+			</table>
+</td>
+</tr>
+</table>
+<br></br>
+<script>
+			/*Top navigation JavaScript code: */
+			function topNavFunction() {
+				var x = document.getElementById("myTopnav");
+				if (x.className === "topnav") {
+					x.className += " responsive";
+				} else {
+					x.className = "topnav";
+				}
+			}
+</script>		
+	</body>
+</html>
